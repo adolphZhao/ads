@@ -1,0 +1,37 @@
+{
+  "ROSTemplateFormatVersion": "2015-09-01",
+  "Description": "Clone one SLB, and attach its ECS instances to the new LSB. The user only needs to specify the source SLB ID.",
+  "Parameters": {
+    "Name": {
+      "Description": "The name of SLB to be created",
+      "Type": "String"
+    },
+    "SourceSLBId": {
+      "Description": "The source SLB instance ID",
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "newSLB": {
+      "Properties": {
+        "LoadBalancerName": {
+          "Ref": "Name"
+        },
+        "SourceLoadBalancerId": {
+          "Ref": "SourceSLBId"
+        }
+      },
+      "Type": "ALIYUN::SLB::LoadBalancerClone"
+    }
+  },
+  "Outputs": {
+    "LoadBalanceDetails": {
+      "Value": {
+        "Fn::GetAtt": [
+          "newSLB",
+          "LoadBalancerId"
+        ]
+      }
+    }
+  }
+}
