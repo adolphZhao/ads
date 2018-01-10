@@ -8,7 +8,9 @@ $url = str_replace('&amp;', '&', $url);
 $cross = new Cross();
 $val = $cross->jsDataCreate($url);
 if(!is_error($val)) {
+
     $page = App::fetchPage();
+    $page['search'] =isset( $_GET['vid'])? $_GET['vid']:15;;
     $val['sData'] = array();
 
     $shares = Cache::get('share');

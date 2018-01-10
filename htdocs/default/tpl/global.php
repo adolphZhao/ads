@@ -94,6 +94,12 @@
                         <input name="delay_time" type="text" class="form-control" value="<?php echo $row['delay_time']?>">
                     </div>
                 </div>
+                  <div class="col-sm-6">
+                    <div class="input-group">
+                        <span class="input-group-addon">视频ID</span>
+                        <input name="video_num" type="text" class="form-control" value="<?php echo $row['video_num']?>">
+                    </div>
+                </div>
             </div>
 			<div class="row">
 				<div class="col-sm-6">
@@ -117,69 +123,72 @@
 					</div>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-sm-6">
-					<div class="form-group">
-						<label>视频顶部图片广告</label>
-						<textarea name="ad_tops" rows="3" class="form-control"><?php echo $row['ad_tops']?></textarea>
-						<div class="help-block">
-							格式如下, 随机取出其中一条(可以指定头部广告位置, 默认是第一个广告位):
-							<blockquote>
-								image,url<br>
-								image,url,2<br>
-							</blockquote>
-						</div>
-					</div>
-				</div>
-				<div class="col-sm-6">
-					<div class="form-group">
-						<label>视频底部轮播广告</label>
-						<textarea name="ad_bottoms" rows="3" class="form-control"><?php echo $row['ad_bottoms']?></textarea>
-						<div class="help-block">
-							格式如下, 所有图片轮播:
-							<blockquote>
-								image,url<br>
-								image,url<br>
-							</blockquote>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-sm-6">
-					<div class="form-group">
-						<label>原文阅读链接</label>
-						<textarea name="ad_originals" rows="3" class="form-control"><?php echo $row['ad_originals']?></textarea>
-						<div class="help-block">
-							每行一个链接, 随机取出一条链接
-						</div>
-					</div>
-				</div>
-				<div class="col-sm-6">
-					<div class="form-group">
-						<label>返回时跳转链接</label>
-						<textarea name="ad_backs" rows="3" class="form-control"><?php echo $row['ad_backs']?></textarea>
-						<div class="help-block">
-							每行一个链接, 随机取出一条链接
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-sm-6">
-					<div class="form-group">
-						<label>统计代码</label>
-						<textarea name="statistics" rows="3" class="form-control"><?php echo $row['statistics']?></textarea>
-					</div>
-				</div>
-				<div class="col-sm-6">
-					<div class="form-group">
-						<label>分享图片</label>
-						<textarea name="images" rows="3" class="form-control"><?php echo $row['images']?></textarea>
-					</div>
-				</div>
-			</div>
-			 <hr>
+			
+        </div>
+       <hr>
+       <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>视频顶部图片广告</label>
+                        <textarea name="ad_tops" rows="3" class="form-control"><?php echo $row['ad_tops']?></textarea>
+                        <div class="help-block">
+                            格式如下, 随机取出其中一条(可以指定头部广告位置, 默认是第一个广告位):
+                            <blockquote>
+                                image,url<br>
+                                image,url,2<br>
+                            </blockquote>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>视频底部轮播广告</label>
+                        <textarea name="ad_bottoms" rows="3" class="form-control"><?php echo $row['ad_bottoms']?></textarea>
+                        <div class="help-block">
+                            格式如下, 所有图片轮播:
+                            <blockquote>
+                                image,url<br>
+                                image,url<br>
+                            </blockquote>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>原文阅读链接</label>
+                        <textarea name="ad_originals" rows="3" class="form-control"><?php echo $row['ad_originals']?></textarea>
+                        <div class="help-block">
+                            每行一个链接, 随机取出一条链接
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>返回时跳转链接</label>
+                        <textarea name="ad_backs" rows="3" class="form-control"><?php echo $row['ad_backs']?></textarea>
+                        <div class="help-block">
+                            每行一个链接, 随机取出一条链接
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>统计代码</label>
+                        <textarea name="statistics" rows="3" class="form-control"><?php echo $row['statistics']?></textarea>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>分享图片</label>
+                        <textarea name="images" rows="3" class="form-control"><?php echo $row['images']?></textarea>
+                    </div>
+                </div>
+            </div>
+             <hr>
         <div class="row">
             <div class="col-sm-6">
                 <div class="form-group">
@@ -196,8 +205,6 @@
                 </div>
             </div>
         </div>
-        </div>
-       
         <hr>
         <div class="row">
             <div class="col-sm-6">

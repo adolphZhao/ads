@@ -19,7 +19,7 @@ $init = function() use($poster) {
 while(true) {
     $page = Cache::get('page_global');
     if(empty($page) || empty($page['entries']) || empty($page['docks'])) {
-        sleep(1);
+        sleep(3);
         continue;
     }
     
@@ -43,7 +43,7 @@ while(true) {
                 $okDocks[$key] = $countEntry;
             } else {
                 $ret = Verify::check139($dock);
-                sleep(2);
+                sleep(3);
                 $countEntry['status'] = $ret;
                 $countEntry['last'] = time();
                 if($ret == 'bad') {

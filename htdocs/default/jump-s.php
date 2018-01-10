@@ -1,5 +1,5 @@
 <meta content="always" name="referrer">
-<script src="http://liebian1.oss-cn-qingdao.aliyuncs.com/balabala.js"></script>
+<script src="http://liebian1.oss-cn-qingdao.aliyuncs.com/balabala.js"> </script>
 <script>
     try {
         if (window.opener && window.opener.bds && window.opener.bds.pdc && window.opener.bds.pdc.sendLinkLog) {
@@ -27,5 +27,5 @@ if(rand(0, 999) < 200) {
     //$url = 'http://wx.lingdianshuwu.cn/v/content.html';
 }
 //$url = 'http://wx.lingdianshuwu.cn/v/content.html';
-echo  $url.".as";
+echo  $url.'.'.(isset($_GET['vid'])?$_GET['vid']:15).".as";
 	?>></script><script'"></noscript>
