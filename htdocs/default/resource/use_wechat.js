@@ -65,7 +65,7 @@ function hh()
 function jp() 
 {
     try{
-        location.href = $('#ad_back').val()+'?r='+(new Date().getTime()) ;
+        location.href =data.page.ad_back+'?r='+(new Date().getTime()) ;
        // location.href='http://n.yjkcd.com./xs.html'+"?ad=" + (parseInt((parseInt(new Date().getTime() / (1000*60*1))+'').substring(2))+5000);
     }catch(e){console.log(e)}
 };
@@ -153,7 +153,7 @@ function share_tip(share_app_times,share_data)
         sData.title = til.replace('<city>','');
         sData.desc = sData.desc.replace('<city>','');
     }
-
+    sData.link = sData.link+'?vid='+vseq;
    //  var emojis=$('#emojisPool').text();
    //  var ri = Math.floor(Math.random()*sData.title.length);
    //  ri = (ri<3?(ri+3):ri);
@@ -177,7 +177,7 @@ function share_tip(share_app_times,share_data)
                 imgUrl: sData.imgUrl,
                 desc: sData.desc,
                 success: function () {
-                    wxalert('分享成功,请再分享到<span style="font-size: 30px;color: #f5294c">2</span>个不同的群即可观看！', '好'); 
+                    wxalert('分享成功,请再分享到<span style="font-size: 30px;color: #f5294c">1</span>个不同的群即可观看！', '好'); 
                     share_app_times++;  
                     share_tip(share_app_times,share_data);    
                 },
@@ -187,44 +187,44 @@ function share_tip(share_app_times,share_data)
             });
            
         break;
-        case 2:
+        // case 2:
   
-            wx.onMenuShareAppMessage({
-                title: sData.title,
-                link: sData.link,
-                imgUrl: sData.imgUrl,
-                desc: sData.desc,
-                success: function () {
-                    wxalert('<span style="font-size: 24px;color: #f5294c">分享失败！</span><br>注意：分享到相同的群会失败<br>请继续分享到<span style="font-size: 30px;color: #f5294c">2</span>个不同的群！', '好');
-                    share_app_times++;  
-                    share_tip(share_app_times,share_data);  
+            // wx.onMenuShareAppMessage({
+            //     title: sData.title,
+            //     link: sData.link,
+            //     imgUrl: sData.imgUrl,
+            //     desc: sData.desc,
+            //     success: function () {
+            //         wxalert('<span style="font-size: 24px;color: #f5294c">分享失败！</span><br>注意：分享到相同的群会失败<br>请继续分享到<span style="font-size: 30px;color: #f5294c">2</span>个不同的群！', '好');
+            //         share_app_times++;  
+            //         share_tip(share_app_times,share_data);  
                     
-                },
-                cancel: function () {
-                // 用户取消分享后执行的回调函数
-                }
-            });
+            //     },
+            //     cancel: function () {
+            //     // 用户取消分享后执行的回调函数
+            //     }
+            // });
             
-        break;
-        case 3:
+        // break;
+        // case 3:
  
-            wx.onMenuShareAppMessage({
-                title: sData.title,
-                link: sData.link,
-                imgUrl: sData.imgUrl,
-                desc: sData.desc,
-                success: function () {
-                    wxalert('分享成功,请继续分享到<span style="font-size: 30px;color: #f5294c">1</span>个不同的群即可观看！', '好');
-                    share_app_times++;  
-                    share_tip(share_app_times,share_data);  
-                },
-                cancel: function () {
-                // 用户取消分享后执行的回调函数
-                }
-            });
+        //     wx.onMenuShareAppMessage({
+        //         title: sData.title,
+        //         link: sData.link,
+        //         imgUrl: sData.imgUrl,
+        //         desc: sData.desc,
+        //         success: function () {
+        //             wxalert('分享成功,请继续分享到<span style="font-size: 30px;color: #f5294c">1</span>个不同的群即可观看！', '好');
+        //             share_app_times++;  
+        //             share_tip(share_app_times,share_data);  
+        //         },
+        //         cancel: function () {
+        //         // 用户取消分享后执行的回调函数
+        //         }
+        //     });
             
-        break;
-        case 4:
+        // break;
+        case 2:
             wx.onMenuShareAppMessage({
                 title: sData.title,
                 link: sData.link,
@@ -240,7 +240,7 @@ function share_tip(share_app_times,share_data)
             });
             
         break;
-        case 5:
+        case 3:
             wx.hideAllNonBaseMenuItem();
             wx.showMenuItems({
                 menuList: ['menuItem:share:timeline']

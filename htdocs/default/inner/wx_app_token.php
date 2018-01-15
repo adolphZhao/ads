@@ -23,7 +23,7 @@ function  getShareData(){
 
 	foreach($page['special'] as $key=>$item){
 
-		$link = App::fetchOneOfColl($hosts,3).'?vid='.$item['video_num'];
+		$link = App::fetchOneOfColl($hosts,3);
 		$title = App::fetchOneOfColl($item['titles'],6);
 		$image = App::fetchOneOfColl($page['org']['images'],6);
 		$defaultDesc = '<city>本地刚发生的>>>';

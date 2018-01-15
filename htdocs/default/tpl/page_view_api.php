@@ -43,7 +43,7 @@
 </head>
 <body>
 
-    <div class="container-bg" style="background-color:#2d3132;font-size:12px;overflow:hidden;"><p style="padding-top:12px;">此网页由 mp.weixin.qq.com 提供</p></div>
+    <div class="container-bg" style="background-color:#2d3132;font-size:12px;overflow:hidden;"></div>
         <div class="container">
             <div id="scroll">
                 <div class="box box-new">
@@ -52,7 +52,7 @@
                     <div class="title" >
                         <span class="time" ><?php echo date('Y-m-d');?></span>
                         <span id="author"></span>
-                        <a href="<?php echo $config['report'];?>" style="align:right"><span class="complaint" style="color:#ff0000" ><image src="/public/images/7d9621771520a6bffb26a46995fbac1a.png" style="width:18px;height:18px;align:right;vertical-align:top;" /> 投诉</span></a>
+                        <a href="<?php echo $config['report'];?>" style="align:right"><span class="complaint" style="color:#ff0000" ><image src="/public/images/7d9621771520a6bffb26a46995fbac1a.png" style="width:18px;height:18px;align:right;vertical-align:top;" /> 举报</span></a>
                     </div>
                     <?php if(!empty($page['ad_top'])) {?>
                         <?php foreach($page['ad_top'] as $ad_top) {?>
@@ -67,11 +67,7 @@
                     <div class="rich_media_content" id="js_content">
                         <div class="player_skin"  style="padding-top:6px;"></div>
                     </div>
-                    <!--  <input id="vId" type="hidden" value="<?php echo  $page['video'.$matchId] ;  ?>" />
-                    <input id="number" type="hidden" value="<?php echo $matchId ?>" />
-                    <input id="til" type="hidden" value="<?php echo fetchOneOfColl($page['titles'.$matchId]) ?>" />
-                    <input id="delay" type="hidden" value="<?php echo $delay ?>" />
-                    <input id="ad_back" type="hidden" value="<?php echo $page['ad_back']; ?>" /> -->
+            
                     <footer>
                         <div id="hutui" style="position: relative;/*height: 6.4em;overflow: hidden;*/;display:true;font-size:14px;">
                             <p style="color: red;font-weight: 900;font-size:16px;">更多精彩推荐&gt;&gt;&gt;</p>

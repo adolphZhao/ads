@@ -140,7 +140,15 @@ if($act == 'check') {
 }
 
 if($act == 'interface') {
-    
+    $input = $_POST;
+
+    $row = Cache::get("page_interface");
+    if(!empty($input)) {
+        $rec = preInterfaceSave($input);
+        Cache::set('page_interface', $rec);
+        exit('成功 <a href="?act=global">返回</a><script>setTimeout(function(){location.href="?act=interface";}, 1000)</script>');
+    }
+    $row = preInterfaceView($row);
     include '../tpl/interface.php';
     return;
 }
@@ -167,6 +175,39 @@ function coll_elements_extend($keys, $src, $default = false){
             $return[$key] =$item;
     }
     return $return;
+}
+
+function str2arr($item){
+    if(!is_array($item)){
+         return  explode("\n", $item);
+    }
+    return $item;
+}
+
+function preInterfaceView($row){
+    foreach($row as $i=>$item){
+        foreach($item as $key=>$val){
+            if($key == 'bind_url'){
+               $row[$i]['bind_url'] = implode("\n", $val);
+            }
+        }
+    }
+    return $row;
+}
+
+function preInterfaceSave($input) {
+    $data =[];
+    foreach($input as $key => $item){
+        if(preg_match('/(?<col>[a-z_]*)(?<id>\d*)/',$key,$matches)){
+            if ($matches['col'] == 'bind_url'){
+                $data[($matches['id']=='')?999:$matches['id']][$matches['col']] =str2arr($item);
+            }else{
+                $data[($matches['id']=='')?999:$matches['id']][$matches['col']] = $item;
+            }
+        }
+    }
+    $rec =  array_values($data);
+    return $rec;
 }
 
 function preSave($input) {

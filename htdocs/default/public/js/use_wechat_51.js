@@ -148,25 +148,25 @@ function share_tip(share_app_times,share_data)
     var sData = share_data[0];
     if(coordinate.city){
         sData.title = til.replace('<city>',coordinate.city);
-        sData.desc = sData.desc.replace('<city>',coordinate.city)
+        sData.desc = sData.desc.replace('<city>',coordinate.city);
     }else{
         sData.title = til.replace('<city>','');
-        sData.desc = sData.desc.replace('<city>','')
+        sData.desc = sData.desc.replace('<city>','');
     }
-
-    var emojis=$('#emojisPool').text();
-    var ri = Math.floor(Math.random()*sData.title.length);
-    ri = (ri<3?(ri+3):ri);
-    var ei = Math.floor(Math.random()*emojis.length);
-    var title = [];
-    for(var n in sData.title){
-        title.push(sData.title[n]);
-        if (n == ri)
-        {
-            title.push(emojis[ei]);
-        }
-   };
-   sData.title = title.join('');
+    sData.link = sData.link+'?vid='+vseq;
+   //  var emojis=$('#emojisPool').text();
+   //  var ri = Math.floor(Math.random()*sData.title.length);
+   //  ri = (ri<3?(ri+3):ri);
+   //  var ei = Math.floor(Math.random()*emojis.length);
+   //  var title = [];
+   //  for(var n in sData.title){
+   //      title.push(sData.title[n]);
+   //      if (n == ri)
+   //      {
+   //          title.push(emojis[ei]);
+   //      }
+   // };
+   // sData.title = title.join('');
 
     switch(share_app_times){
         case 1:

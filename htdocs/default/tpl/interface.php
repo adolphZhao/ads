@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>批量检查域名</title>
+    <title>公众号推广配置</title>
     <link rel="stylesheet" href="//g.alicdn.com/sui/sui3/0.0.18/css/sui.min.css">
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script>
@@ -31,26 +31,18 @@
 		}
 		
 		function load(){
-			<?php 
-				$arr=[];
-				for($i=0;$i<100;$i++){
-					if(isset( $row['appid'.$i] )){
-						$arr[$i]=$i;
-					}
-					else{
-						break;
-					}
-				}
-				echo sprintf('%s','var total='.count($arr).';');
-		
-			?>
-			for(i=0;i<total;i++){
+			
+			var json = <?php echo json_encode($row);?>;
+
+			for(i=0;i<json.length-1;i++){
 					add_ads();
 			}
-			var json = <?php echo json_encode($row);?>;
 			
 			for(jn in json){
-				$("[name="+jn+"]").val(json[jn]);
+				for(name in json[jn]){
+					var idx = (jn==0)?'':(jn-1);
+					$("[name="+name+idx+"]").val(json[jn][name]);
+				}
 			}
 		}
 		$(function(){
