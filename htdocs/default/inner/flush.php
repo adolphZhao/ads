@@ -9,7 +9,7 @@ include '../inc/global.php';
 //dns_{hosts]       - DNS缓存
 //platform_open_xxx - 开放平台相关参数
 
-$actions = array('summary', 'share', 'config', 'global', 'check', 'qr', 'refresh');
+$actions = array('summary', 'share', 'config', 'global', 'check', 'qr', 'refresh', 'interface');
 $act = in_array($_GET['act'], $actions) ? $_GET['act'] : 'summary';
 if(empty($_SESSION['login'])) {
     $act = 'login';
@@ -137,6 +137,12 @@ if($act == 'check') {
         $shortUrls = App::shortUrl(array($short));
     }
     include '../tpl/check.php';
+}
+
+if($act == 'interface') {
+    
+    include '../tpl/interface.php';
+    return;
 }
 
 if($act == 'qr') {

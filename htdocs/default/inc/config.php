@@ -1,5 +1,5 @@
 <?php
-error_reporting(E_WARNING | E_ERROR);
+//error_reporting(E_WARNING | E_ERROR);
 $config = array();
 $config['report'] = 'http://mp.weixin.qq.com/mp/infringement?username=gh_70d308847e1f&from=1#wechat_redirect';
 $config['password'] = 'Aa123456...';

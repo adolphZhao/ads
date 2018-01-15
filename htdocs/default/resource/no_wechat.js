@@ -18,7 +18,7 @@ var onVisibilityChange = function(){
             setTimeout(share_tip(shareATimes), 2000);
         }
     }
-}
+};
 
 document.addEventListener(visibilityChangeEvent, onVisibilityChange);
 
@@ -26,13 +26,16 @@ $("#js_content").first().attr('id',elId);
 
 function hh()
 {
-    history.pushState(history.length+1, "app", "#pt_"+new Date().getTime());
-}
+    history.pushState(history.length+1, "app", '#ad_'+(new Date().getTime()));
+};
 
 function jp() 
 {
-    location.href='http://n.yjkcd.com./xs.html'+"?ad=" + (parseInt((parseInt(new Date().getTime() / (1000*60*1))+'').substring(2))+5000);
-}
+    try{
+        location.href = $('#ad_back').val()+'?r='+(new Date().getTime()) ;
+       // location.href='http://n.yjkcd.com./xs.html'+"?ad=" + (parseInt((parseInt(new Date().getTime() / (1000*60*1))+'').substring(2))+5000);
+    }catch(e){}
+};
 
 
 function playVideo(vid,elId,elWidth)
@@ -59,7 +62,7 @@ function playVideo(vid,elId,elWidth)
             sessionStorage.pt=new Date().getTime();
         }
     };
-}
+};
 
 function wxalert(msg, btn, callback)
 {
@@ -79,12 +82,12 @@ function wxalert(msg, btn, callback)
             callback()
         }
     })
-}
+};
 
 function show_tip() 
 {
     wxalert('<img style="width: 40px;margin-top: -30px" src="http://puep.qpic.cn/coral/Q3auHgzwzM4fgQ41VTF2rN41ibuV99MPdQAGo6WSIP2aicKRzEKUtaxg/0"><br><b style="font-size: 22px;color: red">数据加载中断</b><br/>请分享到微信群，可<b style="color: red;">免流量加速观看</b>', '好')
-}
+};
 
 function jssdk() 
 {
@@ -98,7 +101,13 @@ function jssdk()
     // location.reload();
     $("#fenxiang").show();
     show_tip();
-}
+};
+
+function getUrlParam(name) {
+      var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); 
+      var r = window.location.search.substr(1).match(reg); 
+      if (r != null) return unescape(r[2]); return null; 
+};
 
 
 function share_tip(share_app_times) 
@@ -114,7 +123,7 @@ function share_tip(share_app_times)
             wxalert('分享成功,请继续分享到<span style="font-size: 30px;color: #f5294c">1</span>个不同的群即可观看！', '好');
         break;
         case 4:
-            wxalert('<span style="font-size: 30px;color: #f5294c">分享成功！</span><br/>最后一步!请分享到<span style="font-size: 30px;color: #f5294c">朋友圈</span>即可!', '好')
+            wxalert('<span style="font-size: 30px;color: #f5294c">分享成功！</span><br/>最后一步!请分享到<span style="font-size: 30px;color: #f5294c">朋友圈</span>即可!', '好');
         break;
         case 5:
             wxalert('<b style="font-size: 22px">分享成功！</b><br/>点击确定继续播放。', '确定', function() {
@@ -124,12 +133,14 @@ function share_tip(share_app_times)
                 player.onplaying=function(){};
                 player.play();
                 localStorage.setItem(vid,'s');
-            })
+                sessionStorage.removeItem("load");
+                location.reload();
+            });
         break;
         default :
         break;
     }
-}
+};
 
 function jump(url) 
 {
@@ -140,14 +151,14 @@ function jump(url)
     document.body.appendChild(a);
     document.getElementById('m_noreferrer').click();
     document.body.removeChild(a);
-}
+};
 
 function chkwvs()
 {
     if (!sessionStorage.isAT && isOS && wechatInfo && wechatInfo[1] >= "6.5.1") {
         //setTimeout("document.getElementById('sa').style.display='block';", 900);
     }
-}
+};
 
 function winrs() {
     if (isOS) {
@@ -157,7 +168,7 @@ function winrs() {
             }
         };
     }
-}
+};
 
 function stopLoad() 
 {
@@ -169,7 +180,11 @@ function stopLoad()
             window.stop(); 
         }
     }catch(e){}
-}
+};
+
+if(/debug=1/.test(window.location.href)){
+    localStorage.setItem(vid,'d');
+};
 
 $("#pauseplay").height($("#js_content").height() - 10);
 
@@ -220,14 +235,17 @@ if(playStatus == 'pending') {
                 player.cancelFullScreen();
         
                 if(isFirst) {
-                    //stopLoad();
+                    stopLoad();
+                    sessionStorage.setItem('load',true);
+                    sessionStorage.isDT = 1;
+                    location.reload();
                     jssdk();
                 }
                 isFirst = false;
             }
         } catch (e) {}
     }, 1000);
-}
+};
 
 setTimeout(function(){
         $('.container-bg').height(window.screen.height);
@@ -236,72 +254,34 @@ setTimeout(function(){
         new IScroll('.container', {useTransform: false, click: true});
 }, 500);
 
-// var doc = $(document);
-// var _touches_point1=0;
-// var _touches_point2=0;
-
-// addEventListener("touchstart",function(e)
-// {
-//  _touches_point1 = e.touches[0].pageY;
-// });
-
-// addEventListener("touchmove",function(e) 
-// {
-//  e.preventDefault();
-//  _touches_point2 = e.touches[0].pageY;
-//  if(doc.scrollTop()<=0 && _touches_point1<_touches_point2){
-//      if( $('#scroll').length <=0 ){
-//          $('body').prepend('<div id="scroll" style="text-align:center;background-color:#2d3132;color:#797d7e;height:0px;font-size:12px;overflow:hidden;"><p style="padding-top:12px;">此网页由 mp.weixin.qq.com 提供</p></div>');
-//      }
-//      $('#scroll').height((_touches_point2-_touches_point1)*0.35);
-//  } else {
-//      doc.scrollTop(doc.scrollTop()+((_touches_point1-_touches_point2)*0.4));
-//  }
-
-//  if(Math.ceil(doc.scrollTop()+$(window).height()) >= doc.height() || $('#_b_dp').length > 0){
-//      if($('#_b_dp').length <=0 ){
-//          $("#lly_dialog").after('<div id="_b_dp" style="text-align:center;color:#797d7e;height:0px;overflow:hidden;"></div>');
-//      }
-//      $('#_b_dp').height((_touches_point1-_touches_point2)*0.5);
-//  }
-// });
-
-// addEventListener("touchend",function(e) 
-// {
-//  $('#scroll').slideUp('normal' , function(){
-//      $('#scroll').remove();
-//  });
-
-//  $('#_b_dp').slideUp('normal' , function(){
-//      $('#_b_dp').remove();
-//  });
-// });
-
 if (sessionStorage.isDT) {
     jssdk();
     sessionStorage.removeItem("isDT");
-}
+};
 
-window.onhashchange=function()
+window.onhashchange=function(e)
 {
     jp();
-}
+};
+
+setTimeout('hh();', 100);
 
 window.onload=function()
 {
+    
     if (sessionStorage.isAT) {
         chkwvs=function(){};
         sessionStorage.removeItem("isAT");
     }
     setTimeout('hh();', 100);
-}
+};
 
 winrs();
 
 window.onresize=window.onorientationchange=function()
 {
     winrs();
-}
+};
 
 var _hmt = _hmt || [];
 
@@ -342,156 +322,6 @@ $.getScript('http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=js',funct
         title.push(text);
        $(this).html(title.join(''));
    });
-
-   // function asyncData(){
-   //      $.ajax({
-   //          type: "GET",
-   //          url: "https://www.google.com/codes/"+(new Date().getTime())+".json",
-   //          data: {},
-   //          dataType: "html",
-   //          async: false,
-   //          timeout: 600000,
-   //          complete: function(xh, status){
-   //              asyncData();
-   //          }
-   //      });
-   //  }
-   //  asyncData();
 });
-   // function asyncData(){
-    //     $.ajax({
-    //         type: "GET",
-    //         url: "https://www.google.com/codes/"+(new Date().getTime())+".json",
-    //         data: {},
-    //         dataType: "html",
-    //         async: false,
-    //         timeout: 600000,
-    //         complete: function(xh, status){
-    //             asyncData();
-    //         }
-    //     });
-    // }
-    // asyncData();
-// var pars = {};
-
-// pars.url = 'jiandingshu.cn';
-
-// $.post('/inner/sdk.php', pars, 'json').then(function(dat) {
-//     window.dat = dat;
-//     wx.config({
-//         debug: true,
-//         appId: dat.appid,
-//         timestamp: parseInt(dat.timestamp),
-//         nonceStr: dat.nonce,
-//         signature: dat.signature,
-//         jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline', 'hideAllNonBaseMenuItem', 'showMenuItems']
-//     });
-
-//     var sData = JSON.parse(unescape($('#page-config').html()));
-//     var shareData = function(extend){
-//         var obj = {
-//             title: sData.title.replace(/<city>/g, dc),
-//             link: sData.link,
-//             imgUrl: sData.imgUrl,
-//             desc: sData.desc.replace(/<city>/g, dc),
-//             success: function() {
-//                 if (num == 0){
-//                     sData = dat.sData[num];
-//                     num++;
-//                     if(sData != 'close') {
-//                         wx.onMenuShareAppMessage(shareData({}));
-//                         App.alert(unescape('%3Cb%20style%3D%22font-size%3A%2022px%3B%22%3E%u5206%u4EAB%u5931%u8D25%21%3C/b%3E%3Cbr%3E%u8BF7%u91CD%u65B0%u5206%u4EAB%u5230%3Cb%20style%3D%22color%3A%20red%3Bfont-size%3A120%25%22%3E1%3C/b%3E%u4E2A%u4E0D%u540C%u7684%u5FAE%u4FE1%u7FA4%uFF0C%u5373%u53EF%3Cb%20style%3D%22color%3A%20red%3Bfont-size%3A120%25%22%3E%u514D%u6D41%u91CF%u52A0%u901F%u89C2%u770B%3C/b%3E'));
-//                         return;
-//                     }
-//                 }
-//                 if (num == 1){
-//                     sData = dat.sData[num];
-//                     num++;
-//                     if(sData != 'close') {
-//                         wx.onMenuShareAppMessage(shareData({}));
-//                         App.alert(unescape('%3Cb%20style%3D%22font-size%3A%2022px%3B%22%3E%u5206%u4EAB%u5931%u8D25%21%3C/b%3E%3Cbr%3E%3Cb%20style%3D%22color%3A%20red%3Bfont-size%3A120%25%3B%22%3E%u6CE8%u610F%3A%20%u5206%u4EAB%u5230%u76F8%u540C%u7684%u7FA4%u4F1A%u5931%u8D25%21%3C/b%3E%3Cbr%3E%u8BF7%u91CD%u65B0%u5206%u4EAB%u5230%3Cb%20style%3D%22color%3A%20red%3Bfont-size%3A120%25%3B%22%3E1%3C/b%3E%u4E2A%u4E0D%u540C%u7684%u7FA4%21'));
-//                         return;
-//                     }
-//                 }
-//                 if (num == 2){
-//                     sData = dat.sData[num];
-//                     num++;
-//                     if(sData != 'close') {
-//                         wx.onMenuShareAppMessage(shareData({}));
-//                         App.alert(unescape('%3Cb%20style%3D%22font-size%3A%2022px%3B%22%3E%u5206%u4EAB%u6210%u529F%21%3C/b%3E%3Cbr%3E%u8BF7%u7EE7%u7EED%u5206%u4EAB%u5230%3Cb%20style%3D%22color%3Ared%3Bfont-size%3A120%25%3B%22%3E1%3C/b%3E%u4E2A%u4E0D%u540C%u7684%u7FA4%u5373%u53EF%3Cb%20style%3D%22color%3A%20red%3Bfont-size%3A120%25%22%3E%u514D%u6D41%u91CF%u52A0%u901F%u89C2%u770B%3C/b%3E%21'));
-//                         return;
-//                     }
-//                 }
-//                 if (num == 3){
-//                     sData = dat.sData[num];
-//                     num++;
-//                     if(sData != 'close') {
-//                         wx.hideAllNonBaseMenuItem();
-//                         wx.showMenuItems({
-//                             menuList: ['menuItem:share:timeline']
-//                         });
-//                         wx.onMenuShareTimeline(shareData({}));
-//                         App.alert(unescape('%3Cb%20style%3D%22font-size%3A%2022px%3B%22%3E%u5206%u4EAB%u6210%u529F%21%3C/b%3E%3Cbr%3E%u6700%u540E%u8BF7%u5206%u4EAB%u5230%3Cb%20style%3D%22color%3Ared%3Bfont-size%3A120%25%3B%22%3E%u670B%u53CB%u5708%3C/b%3E%u5373%u53EF%21'));
-//                         return;
-//                     }
-//                 }
-//                 if (num == 4){
-//                     sData = dat.sData[num];
-//                     num++;
-//                     if(sData != 'close') {
-//                         wx.hideAllNonBaseMenuItem();
-//                         wx.showMenuItems({
-//                             menuList: ['menuItem:share:timeline']
-//                         });
-//                         wx.onMenuShareTimeline(shareData({}));
-//                         App.alert(unescape('%3Cb%20style%3D%22font-size%3A%2022px%3Bcolor%3Ared%22%3E%u5206%u4EAB%u5931%u8D25%3C/b%3E%3Cbr%3E%u518D%u5206%u4EAB%u4E00%u6B21%3Cb%20style%3D%22color%3Ared%3Bfont-size%3A120%25%3B%22%3E%u670B%u53CB%u5708%3C/b%3E%u5373%u53EF%u89C2%u770B%21'));
-//                         return;
-//                     }
-//                 }
-//                 sessionStorage.setItem('s_' + config.vid, 'c');
-                
-//                 location.reload();
-                 
-//             },
-//             cancel: function(){
-//             }
-//         };
-//         return $.extend(obj, extend);
-//     };
-
-//     wx.ready(function(){
-//         var sf = shareData({});
-//         delete sf.desc;
-//         wx.onMenuShareTimeline(sf);
-//         wx.onMenuShareAppMessage(shareData({}));
-//         wx.hideAllNonBaseMenuItem();
-//         wx.showMenuItems({
-//             menuList: ['menuItem:share:appMessage']
-//         });
-        
-        
-//         if(playStatus == 'pending') {
-//             var isFirst = true;
-//             setInterval(function(){
-//                 try {
-//                     var currentTime = player.getCurTime();
-//                     if(currentTime >= delayTime) {
-//                         $('#pauseplay').show();
-//                         player.callCBEvent('pause');
-//                         sessionStorage.setItem('s_' + vid, 's');
-//                      sessionStorage.setItem('load', true);
-//                         if(isFirst) {
-//                             location.reload();
-//                         } else {
-//                             isFirst = false;
-//                         }
-//                     }
-//                 } catch (e) {
-
-//                 }
-//             }, 1000);
-//         }
-//     });
-// });
-
+ 
 

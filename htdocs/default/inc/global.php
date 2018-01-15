@@ -1043,6 +1043,7 @@ DOC;
             return $access['token'];
         } else {
             $ret = $this->getAuthorizerAccessToken($this->authorizer['appid'], $this->authorizer['refresh']);
+           var_dump($ret);
             if(is_error($ret)) {
                 return $ret;
             } else {

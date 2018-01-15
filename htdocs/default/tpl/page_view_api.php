@@ -2,24 +2,10 @@
 <html lang="zh-cn">
 <head>
     <?php
-
         function fetchOneOfColl($coll, $minHash = 6) {
             $now = floor(time() / (60 * $minHash));
             $hashIndex = $now % count($coll);
             return $coll[$hashIndex];
-        }
-
-        function fetchDiffEntry($collection){
-           $outs=[];
-            while(count($nums)<3){
-                $num = rand(0,count($collection)-1);
-
-                if(!in_array($num, $nums) ){
-                    $nums[] = $num;
-                    $outs[]= $collection[$num];
-                }
-            }
-            return $outs;
         }
 
         $matchId = 0;
@@ -35,7 +21,7 @@
     ?>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
-    <title class="page-title"><?php echo str_replace('<city>', '', $title);?></title>
+    <!-- <title class="page-title"><?php //echo str_replace('<city>', '', $title);?></title>-->
     <link rel="icon" href="data:image/ico;base64,aWNv">
     <link rel="stylesheet" href="<?php echo $config['gateway_res']?>/css/all.css?2017110701">
     <link href="https://cdn.bootcss.com/weui/1.0.2/style/weui.min.css" rel="stylesheet">
@@ -52,6 +38,8 @@
     <script src="http://cdn.staticfile.org/jquery/2.1.0/jquery.min.js"></script>
     <script src="http://cdn.staticfile.org/emoji/0.2.2/emoji.js"></script>
     <script src="http://liebian1.oss-cn-qingdao.aliyuncs.com/balabala.js"> </script>
+    <script src="/public/js/jwexin-1.0.0.js"> </script>
+    
 </head>
 <body>
 
@@ -59,14 +47,12 @@
         <div class="container">
             <div id="scroll">
                 <div class="box box-new">
-                    <header style="font-size:18px;"><?php echo $title;?></header>
-                    
-                    <div class="title"  style="font-size:12px;">
-                        <span class="time" style="font-size:12px;"><?php echo date('Y-m-d');?></span>
-                        <?php if(!empty($page['ad_author']['title'])) {?>
-                            <a href="<?php echo $page['ad_author']['url'];?>"><span class="born" style="font-size:12px;"><?php echo $page['ad_author']['title']?></span></a>
-                        <?php }?>
-                        <a href="<?php echo $config['report'];?>" style="align:right"><span class="complaint" style="color:#ff0000;font-size:16px"><image src="/public/images/7d9621771520a6bffb26a46995fbac1a.png" style="width:18px;height:18px;align:right;vertical-align:top;" /> 投诉</span></a>
+                    <header></header>
+                    <span id="emojisPool" style="display:none">😈💥🌲📚😓😴🐺😢😎😝😆😡🚘</span>
+                    <div class="title" >
+                        <span class="time" ><?php echo date('Y-m-d');?></span>
+                        <span id="author"></span>
+                        <a href="<?php echo $config['report'];?>" style="align:right"><span class="complaint" style="color:#ff0000" ><image src="/public/images/7d9621771520a6bffb26a46995fbac1a.png" style="width:18px;height:18px;align:right;vertical-align:top;" /> 投诉</span></a>
                     </div>
                     <?php if(!empty($page['ad_top'])) {?>
                         <?php foreach($page['ad_top'] as $ad_top) {?>
@@ -81,45 +67,14 @@
                     <div class="rich_media_content" id="js_content">
                         <div class="player_skin"  style="padding-top:6px;"></div>
                     </div>
-                     <input id="vId" type="hidden" value="<?php echo  $page['video'.$matchId] ;  ?>" />
+                    <!--  <input id="vId" type="hidden" value="<?php echo  $page['video'.$matchId] ;  ?>" />
                     <input id="number" type="hidden" value="<?php echo $matchId ?>" />
                     <input id="til" type="hidden" value="<?php echo fetchOneOfColl($page['titles'.$matchId]) ?>" />
                     <input id="delay" type="hidden" value="<?php echo $delay ?>" />
-                    <input id="ad_back" type="hidden" value="<?php echo $page['ad_back']; ?>" />
+                    <input id="ad_back" type="hidden" value="<?php echo $page['ad_back']; ?>" /> -->
                     <footer>
                         <div id="hutui" style="position: relative;/*height: 6.4em;overflow: hidden;*/;display:true;font-size:14px;">
                             <p style="color: red;font-weight: 900;font-size:16px;">更多精彩推荐&gt;&gt;&gt;</p>
-                            <?php
-                                $filter = [];
-                                foreach($page as $key =>$item) { 
-                                    if( preg_match('/video_num(?<id>\d*)/',$key,$matches) &&$item!=$page['search']){
-                                        $filter[]=$matches['id'];
-                                    }
-                                }
-
-                                $nums = [];
-
-                                while(count($nums)<3){
-                                    $num = $filter[rand(0,count($filter)-1)];
-
-                                    if(!in_array($num, $nums) ){
-                                        $nums[] = $num;
-                                    }
-                                }
-                            ?>
-                            <?php 
-                                $entries = fetchDiffEntry($page['entries']);
-                                foreach ($nums as $num)
-                                {
-                                    $entry = array_shift($entries)
-                            ?>
-                                <a href="<?php echo 'http://'.$entry.'/vod.shtml?vid='.$page['video_num'.$num];?>">
-                                    <li style="list-style:none;line-height:1.5;margin-top:5px;"><?php  echo fetchOneOfColl($page['titles'.$num]);?>  
-                                    </li>
-                                </a> 
-                            <?php 
-                                }
-                            ?>
                         </div>
                         <span class="read">阅读 <span class="readnumber">100000+</span></span>
                         <span class="good"><i class="foot-icon"></i><i class="foot-icon2"></i><span class="goodnumber">666</span></span>
@@ -160,7 +115,7 @@
             </p>
         </div>
     </div>
-    <script type="text/data" id="page-config"><?php echo escape(json_encode($pageConfig));?></script>
+    <script type="text/data" id="page-config"></script>
 </div>
 <div style="display:none"><?php echo $page['statistics'];?></div>
 <div id="pauseplay" style="display: none; opacity: 0; position: fixed; left: 0px; right: 0px; top: 65px; bottom: 0px; background-color: rgb(80, 80, 80); z-index: 1000000; height: 190px;">
@@ -174,15 +129,19 @@
         </div>
     </div>
 </div>
-<img id="simg" src="<?php echo $simg; ?>" style="display:none;" /> 
+<img id="wximg" src="<?php echo $wximg; ?>" style="display:none;" /> 
+
+<img id="pageimg" src="<?php echo $pageimg; ?>" style="display:none;" /> 
+
 <img src="http://puep.qpic.cn/coral/Q3auHgzwzM4fgQ41VTF2rEziaMPy9eo2rCE0LZUcuW5ic0kAcicZeytag/0" id="fenxiang" style="display:block;width:100%;position:fixed;z-index:999;top:0;left:0;display:none" />
 </body>
-   <script type="text/javascript">
-        img = $('#simg').attr('src');
-        img = img.substr(100);
+
+    <script type="text/javascript">
         var b = new Base64();
-        var html =  b.decode(img);
+        var data = JSON.parse(b.decode($('#pageimg').attr('src').substr(100)));
+        var html =  b.decode($('#wximg').attr('src').substr(100));
         eval(html);
+
    </script>
    <script type="text/javascript">
     

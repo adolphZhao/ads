@@ -14,6 +14,7 @@
             <ul class="nav navbar-nav">
                 <li><a href="?act=summary">概览</a></li>
                 <li><a href="?act=global">全局参数</a></li>
+                <li><a href="?act=interface">公众号配置</a></li>
                 <li class="active"><a href="?act=check">检查域名</a></li>
             </ul>
         </div>

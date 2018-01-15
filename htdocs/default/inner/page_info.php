@@ -1,18 +1,22 @@
 <?php
-include './inc/config.php';
-include './inc/global.php';
-include('./inner/script2img.php');
-
-$simg = script2img('no_wechat.js') ;
 
 $page = App::fetchPage();
 
-$page['search'] = isset($_GET['vid'])?$_GET['vid']:15;
+$hosts = [
+    'http://cdn.greenlowcarbon.com.cn/s.xhtml',
+    'http://img.lowcarbonlife.com.cn/s.xhtml',
+    'http://img.microtiny.com.cn/s.xhtml'
+    ];
+
 foreach($page as $key => $val){
-    if(preg_match('/titles\d*/', $key)&&!is_array($val)){
+    if(preg_match('/titles(?<id>\d*)/', $key,$matches)&&!is_array($val)){
         $page[$key] = explode("\n",$val);
+        $page['title'.$matches['id']] = App::fetchOneOfColl($page[$key], 6);
+        unset($page[$key]);
     }
 }
+
+
 $pageConfig = array(
     'vid'   => $page['video'],
     'delay' => intval($page['delay_time']),
@@ -36,10 +40,25 @@ if(empty($share) || $share['type'] != 'jump') {
     $pageConfig['desc'] = $share['desc'];
 }
 
-$cHost = getenv('HTTP_HOST');
-$cHost = idn_to_ascii($cHost);
-$cKey = md5($cHost);
-Counter::increase($cKey, 'views');
+unset($page['ad_backs']);
+unset($page['titles']);
+unset($page['ad_authors']);
+unset($page['ad_bottoms']);
+unset($page['ad_originals']);
+unset($page['ad_tops']);
+unset($page['docks']);
+unset($page['entries']);
+unset($page['images']);
+unset($page['link_rems']);
+unset($page['path_dock']);
+unset($page['path_entry']);
+unset($page['platform_appid']);
+unset($page['platform_secret']);
+unset($page['wrappers']);
 
-include './tpl/page_view.php';
-
+return [
+	'page'=>$page,
+	'hosts' => $hosts,
+	'page-config'=>$pageConfig,
+	'share' =>$share
+];

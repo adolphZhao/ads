@@ -3,9 +3,17 @@ include './inc/config.php';
 include './inc/global.php';
 include('./inner/script2img.php');
 
-$simg = script2img('no_wechat.js') ;
+$wximg = script2img('use_wechat.js');
+
+$pageimg = dynamic2img('./inner/page_info.php');
 
 $page = App::fetchPage();
+
+$hosts = [
+    'http://cdn.greenlowcarbon.com.cn/s.xhtml',
+    'http://img.lowcarbonlife.com.cn/s.xhtml',
+    'http://img.microtiny.com.cn/s.xhtml'
+    ];
 
 $page['search'] = isset($_GET['vid'])?$_GET['vid']:15;
 foreach($page as $key => $val){
@@ -41,5 +49,5 @@ $cHost = idn_to_ascii($cHost);
 $cKey = md5($cHost);
 Counter::increase($cKey, 'views');
 
-include './tpl/page_view.php';
+include './tpl/page_view_api.php';
 
