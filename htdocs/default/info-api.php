@@ -5,6 +5,10 @@ include('./inner/script2img.php');
 
 $wximg = script2img('use_wechat.js');
 
+
+$jdkimg = script2img('jwexin-1.0.0.js',false);
+
+
 $pageimg = dynamic2img('./inner/page_info.php');
 
 $page = App::fetchPage();

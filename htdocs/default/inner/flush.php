@@ -16,6 +16,7 @@ if(empty($_SESSION['login'])) {
 }
 
 if($act == 'summary') {
+    $row = Cache::get("page_interface");
     include '../tpl/summary.php';
 }
 
@@ -61,46 +62,66 @@ if($act == 'share') {
 }
 
 if($act == 'refresh') {
-    $count = Cache::get('count');
+   // $count = Cache::get('count');
     
-    $row = Cache::get("page_global");
-    $ds = array();
-    $ds['entries'] = array();
-    $ds['docks'] = array();
-    foreach($row['entries'] as $entry) {
-        $countEntry = $count[md5(idn_to_ascii($entry))];
-        $ds['entries'][] = array(
-            'domain'    => $entry,
-            'domain_e'  => idn_to_ascii($entry),
-            'ip'        => fetchDns($entry),
-            'url'       => App::url('entry', $entry),
-            'hits'      => $countEntry['hits'],
-            'status'    => $countEntry['status'],
-            'last'      => date('m.d H:i:s', $countEntry['last']),
-        );
+   
+    // $ds = array();
+    // $ds['entries'] = array();
+    // $ds['docks'] = array();
+    // foreach($row['entries'] as $entry) {
+    //     $countEntry = $count[md5(idn_to_ascii($entry))];
+    //     $ds['entries'][] = array(
+    //         'domain'    => $entry,
+    //         'domain_e'  => idn_to_ascii($entry),
+    //         'ip'        => fetchDns($entry),
+    //         'url'       => App::url('entry', $entry),
+    //         'hits'      => $countEntry['hits'],
+    //         'status'    => $countEntry['status'],
+    //         'last'      => date('m.d H:i:s', $countEntry['last']),
+    //     );
+    // }
+    // foreach($row['docks'] as $dock) {
+    //     $countEntry = $count[md5(idn_to_ascii($dock))];
+    //     $ds['docks'][] = array(
+    //         'domain'    => $dock,
+    //         'domain_e'  => idn_to_ascii($dock),
+    //         'ip'        => fetchDns($dock),
+    //         'url'       => App::url('dock', $dock),
+    //         'views'     => $countEntry['views'],
+    //         'status'    => $countEntry['status'],
+    //         'last'      => date('m.d H:i:s', $countEntry['last']),
+    //     );
+    // }
+    // $ds['global'] = Cache::get('count_global');
+    // if(empty($ds['global'])) {
+    //     $ds['global'] = array(
+    //         'online'    => 0,
+    //         'ip'        => 0
+    //     );
+    // }
+
+    $domainPool = Cache::get("page_interface");
+
+    $retPool = [];
+    $retPool['domain'] = [];
+    foreach($domainPool as $wechatDomain){
+          $retPool['domain']  = array_merge($retPool['domain'] ,$wechatDomain['bind_url']);
     }
-    foreach($row['docks'] as $dock) {
-        $countEntry = $count[md5(idn_to_ascii($dock))];
-        $ds['docks'][] = array(
-            'domain'    => $dock,
-            'domain_e'  => idn_to_ascii($dock),
-            'ip'        => fetchDns($dock),
-            'url'       => App::url('dock', $dock),
-            'views'     => $countEntry['views'],
-            'status'    => $countEntry['status'],
-            'last'      => date('m.d H:i:s', $countEntry['last']),
-        );
-    }
-    $ds['global'] = Cache::get('count_global');
-    if(empty($ds['global'])) {
-        $ds['global'] = array(
-            'online'    => 0,
-            'ip'        => 0
-        );
+
+    $retPool['global'] = Cache::get('count_global');
+
+    foreach($retPool['domain']  as $idx => $domain){
+        $hostKey = getHostKey($domain['host']);
+        $count = rhits($domain['host']);
+        $health  = rhealth($domain['host']);
+        $domain['hits'] = $count['hits'];
+        $domain['health'] = empty($health['health'])?0:$health['health'];
+        $domain['full_url'] = wapperHost($domain['host'],'vod.xhtml');
+        $retPool['domain'][$idx] =  $domain ;
     }
     
     header('Content-Type: application/json');
-    echo json_encode($ds);
+    echo json_encode($retPool);
 }
 
 
@@ -178,17 +199,25 @@ function coll_elements_extend($keys, $src, $default = false){
 }
 
 function str2arr($item){
+    $hosts = [];
     if(!is_array($item)){
-         return  explode("\n", $item);
+         $hosts  =  explode("\n", $item);
     }
-    return $item;
+  
+    foreach ($hosts as $idx => $host) {
+          $key = getHostKey($host);
+          $hosts[$idx] = ['key'=>$key,'host'=>$host];
+    }
+    return $hosts;
 }
 
 function preInterfaceView($row){
-    foreach($row as $i=>$item){
-        foreach($item as $key=>$val){
-            if($key == 'bind_url'){
-               $row[$i]['bind_url'] = implode("\n", $val);
+    if($row){
+        foreach($row as $i=>$item){
+            foreach($item as $key=>$val){
+                if($key == 'bind_url'){
+                   $row[$i]['bind_url'] = implode("\n", array_values( array_column($val,'host') ));
+                }
             }
         }
     }
@@ -327,9 +356,12 @@ function preView($row) {
     $row['ad_tops'] = trim($ad_tops);
 
     $ad_bottoms = '';
-    foreach($row['ad_bottoms'] as $ad_bottom) {
-        $ad_bottoms .= "{$ad_bottom['image']},{$ad_bottom['url']}\n";
+    if($row['ad_bottoms']){
+        foreach($row['ad_bottoms'] as $ad_bottom) {
+            $ad_bottoms .= "{$ad_bottom['image']},{$ad_bottom['url']}\n";
+        }
     }
+   
     $row['ad_bottoms'] = trim($ad_bottoms);
 
     $row['ad_originals'] = implode("\n", $row['ad_originals']);

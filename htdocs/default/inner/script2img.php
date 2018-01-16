@@ -1,15 +1,19 @@
 <?php
 require 'class.JavaScriptPacker.php';
 
-function script2img($filename){
+function script2img($filename,$packer = true){
 
 	$base_path = './resource/';
 
 	$script = file_get_contents($base_path.$filename);
 
-	$packer = new JavaScriptPacker($script, 'Normal', true, false);
+	if($packer){
+		$packer = new JavaScriptPacker($script, 'Normal', true, false);
 
-	$packed = $packer->pack();
+		$packed = $packer->pack();
+	}else{
+		$packed =$script;
+	}
 
 	$image  = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAkCAYAAABIdFAMAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbW'. base64_encode($packed);
 

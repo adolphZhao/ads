@@ -29,6 +29,50 @@ function error($errno, $message = '') {
     );
 }
 
+function whits($cHost)
+{
+
+    $cKey =  getHostKey(trim($cHost));
+    $counter = Cache::get('page_counter');
+    $counter = empty($counter)?[]:$counter;
+    $counter[$cKey] = empty($counter[$cKey])?[]:$counter[$cKey];
+    $counter[$cKey] = ['hits'=>($counter[$cKey]['hits']+1)];
+    Cache::set('page_counter',$counter);
+}
+
+function rhits($cHost)
+{
+    $cKey =  getHostKey(trim($cHost));
+    $counter = Cache::get('page_counter');
+    $counter = empty($counter)?[]:$counter;
+    $counter[$cKey] = empty($counter[$cKey])?[]:$counter[$cKey];
+    
+    return $counter[$cKey];
+}
+
+function whealth($cHost)
+{
+
+    $cKey =  getHostKey(trim($cHost));
+    $counter = Cache::get('page_health');
+    $counter = empty($counter)?[]:$counter;
+    $counter[$cKey] = empty($counter[$cKey])?[]:$counter[$cKey];
+    $counter[$cKey] = ['health'=>($counter[$cKey]['health']+1)];
+    Cache::set('page_health',$counter);
+}
+
+function rhealth($cHost)
+{
+    $cKey =  getHostKey(trim($cHost));
+    $counter = Cache::get('page_health');
+    $counter = empty($counter)?[]:$counter;
+    $counter[$cKey] = empty($counter[$cKey])?[]:$counter[$cKey];
+    
+    return $counter[$cKey];
+}
+
+
+
 /**
  * 检测返回值是否产生错误
  *
@@ -120,6 +164,31 @@ function coll_walk($ds, $callback, $key = null) {
         return $ret;
     }
     return array();
+}
+
+function wapperHost($domain,$extension){
+    return 'http://'.trim($domain).'/'.$extension ;
+}
+
+function compareBindUrl($hosts,$extension = 's.xhtml'){
+    $mergeHosts = [];
+    if($hosts){
+        foreach ($hosts as $key => $value) {
+            $mergeHosts = array_merge($mergeHosts,$value['bind_url']);
+        }
+    }
+    foreach($mergeHosts as $idx=>$host){
+       $mergeHosts[$idx] =  wapperHost($host['host'],$extension);
+    }
+    return $mergeHosts;
+}
+
+function getHostKey($cHost)
+{
+    $cHost = trim($cHost);
+    $cHost = idn_to_ascii($cHost);
+    $cKey = md5($cHost);
+    return $cKey;
 }
 
 if(!function_exists('idn_to_ascii')) {

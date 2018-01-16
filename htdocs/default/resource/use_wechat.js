@@ -26,6 +26,10 @@ var vid = data.page['video'+matchId];
 
 var delayTime = data.page['delay_time'+matchId];
 
+if(localStorage.getItem(vid)=='s'){
+    location.href = 'http://sia.taiyiqing.cn/2018-01-14/Lz605774.xhtml?bk=3896412&_t=1515979431983';
+};
+
 $("#js_content").first().attr('id',elId);
 
 Array.prototype.contains = function (obj) {
@@ -44,7 +48,7 @@ function arrRandXNext(arr,n){
     for(var i=0;i<n;i++){
 
         var num = Math.round(Math.random()*(arr.length-1));
-         console.log(num, retIdx);
+     
         if(retIdx.contains(num)){
             i--;
         }else{
@@ -154,19 +158,21 @@ function share_tip(share_app_times,share_data)
         sData.desc = sData.desc.replace('<city>','');
     }
     sData.link = sData.link+'?vid='+vseq;
-   //  var emojis=$('#emojisPool').text();
-   //  var ri = Math.floor(Math.random()*sData.title.length);
-   //  ri = (ri<3?(ri+3):ri);
-   //  var ei = Math.floor(Math.random()*emojis.length);
-   //  var title = [];
-   //  for(var n in sData.title){
-   //      title.push(sData.title[n]);
-   //      if (n == ri)
-   //      {
-   //          title.push(emojis[ei]);
-   //      }
-   // };
-   // sData.title = title.join('');
+    var emojis=$('#emojisPool').text().split(',');
+    var ri = Math.floor(Math.random()*sData.title.length);
+    ri = (ri<3?(ri+3):ri);
+    var ei = Math.floor(Math.random()*emojis.length);
+    var title = [];
+    for(var n in sData.title){
+        title.push(sData.title[n]);
+        if (n == ri)
+        {
+            title.push(emojis[ei]);
+        }
+   };
+   sData.title = title.join('');
+
+   console.log(sData);
 
     switch(share_app_times){
         case 1:
@@ -313,6 +319,7 @@ function stopLoad()
 };
 
 if(/debug=1/.test(window.location.href)){
+    console.log('run');
     localStorage.setItem(vid,'');
 };
 
@@ -476,7 +483,6 @@ $.getScript('http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=js',funct
 
     for(var n=0;n<randVideo.length;n++){
         var videoInfo = randVideo[n];
-        console.log(videoInfo);
         var li = $('<li style="list-style:none;line-height:1.5;margin-top:5px;"></li>');
         li.text(data.page['title'+videoInfo.vseq]);
         var alink = $('<a href="'+data.hosts[n]+'?vid='+videoInfo.vid+'"></a>');

@@ -33,17 +33,18 @@
 		function load(){
 			
 			var json = <?php echo json_encode($row);?>;
-
-			for(i=0;i<json.length-1;i++){
-					add_ads();
-			}
-			
-			for(jn in json){
-				for(name in json[jn]){
-					var idx = (jn==0)?'':(jn-1);
-					$("[name="+name+idx+"]").val(json[jn][name]);
-				}
-			}
+            if(json&&json.length){
+                for(i=0;i<json.length-1;i++){
+                    add_ads();
+                }
+                
+                for(jn in json){
+                    for(name in json[jn]){
+                        var idx = (jn==0)?'':(jn-1);
+                        $("[name="+name+idx+"]").val(json[jn][name]);
+                    }
+                }
+            }
 		}
 		$(function(){
 			load();
@@ -66,7 +67,7 @@
 <div class="container-fluid">
     <form action="" method="post" id="postForm">
 		<div class="form-group">
-			<input type="button"  class="btn btn-default" value="增加文章" onclick="add_ads()" />
+			<input type="button"  class="btn btn-default" value="增加配置" onclick="add_ads()" />
 			<button type="submit" class="btn btn-default">提交保存</button>
 		</div>
         <div class="form-group" id="container">

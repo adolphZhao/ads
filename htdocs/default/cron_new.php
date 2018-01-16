@@ -35,51 +35,51 @@ function removeDomainFromPool($domain){
     return true;
 }
 
+function flagDomainFromPool($domain){
+    whealth($domain);
+}
+
 while(true) {
     $failureArr=[];
 
-    $page = Cache::get('page_global');
+    $domainPool = Cache::get("page_interface");
+
+    $retPool = [];
+    $retPool['domain'] = [];
+    foreach($domainPool as $wechatDomain){
+          $retPool['domain']  = array_merge($retPool['domain'] ,$wechatDomain['bind_url']);
+    }
    
-    if(empty($page) || empty($page['entries']) || empty($page['docks'])) {
+    if(empty($retPool['domain'])) {
         echo "没有检测到需要测试的域名......\n";
         sleep(30);
         continue;
     }
 
-    $domainArr = array_merge($page['entries'],$page['docks']);
+    $domainArr = $retPool['domain'];
 
     foreach($domainArr as $domain) {
-        echo '检测Domain => '. $domain . "\n";
+      
+        echo '检测Domain => '. $domain['host'] . "\n";
 
 
-        $key = md5(idn_to_ascii($domain));
-
-        $status = detectDomainStatus($domain);
+        $status = detectDomainStatus($domain['host']);
 
 
         if($status->status ==0 ||$status->status ==3)
         {
-            $failureArr[$key] = ['domain'=>$status->domain,'status'=>$status->status,'times'=>0];
-            echo $domain.'  =>  '.$status->errmsg ."\n";
+            echo $status->errmsg .'  =>  '.$domain['host']."\n";
 
         }else{
             //标记域名检测不通过
-            echo $domain.'  =>  '.$status->status .' . '.$status->errmsg ."\n";
-            $failureArr[$key] = ['domain'=>$status->domain,'status'=>$status->status,'times'=>isset($failureArr[$key])?$failureArr[$key]['times']+1:1];
+            echo $status->errmsg .'  =>  '.$domain['host'].'.'. $status->status ."\n";
+            flagDomainFromPool($domain['host']);
         }  
         echo "--------------------------------\n";
         sleep(4);
     }
 
-    foreach($failureArr as $domain){
-        
-        if($domain['times'] >1){
-            echo '检测Domain => '. $domain['domain'] . "已经不符合使用规则。\n";
-            removeDomainFromPool( $domain);
-        }
-    }
-
-    exec('chown -R www:www /c/htdocs/default');
+    //exec('chown -R www:www /c/htdocs/default');
 
     sleep(8);
 }

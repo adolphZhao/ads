@@ -13,11 +13,7 @@ function  getShareData(){
 
 	$page = Database::fetchPages();
 
-	$hosts = [
-		'http://cdn.greenlowcarbon.com.cn/s.xhtml',
-		'http://img.lowcarbonlife.com.cn/s.xhtml',
-		'http://img.microtiny.com.cn/s.xhtml'
-	];
+	$hosts = compareBindUrl(Cache::get('page_interface'),'vod.xhtml');
 
 	$shareData = [];
 
@@ -40,7 +36,27 @@ function  getShareData(){
 }
 
 try{
-    $signature = new \Common\WxSignature($url);
+	$appid = '';
+	$appsec = '';
+
+	if(preg_match('/:\/\/([^\/]*)\//', $url,$matches))
+	{
+		$domain = $matches[1];
+
+		$cKey = getHostKey($domain);
+		$interface = Cache::get("page_interface");
+		
+		foreach($interface as $config){
+			
+			if(in_array($cKey, array_column($config['bind_url'],'key'))){
+				 $appid = $config['appid'];
+				 $appsec = $config['appsecret'];
+				 break;
+			}
+		}
+	}
+	
+    $signature = new \Common\WxSignature($url,$appid,$appsec);
 
     $config = $signature ->getAPISignauture();
 

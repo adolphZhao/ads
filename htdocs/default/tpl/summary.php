@@ -8,11 +8,14 @@
     <link rel="stylesheet" href="//g.alicdn.com/sui/sui3/0.0.18/css/sui.min.css">
     <link href="https://cdn.bootcss.com/animate.css/3.5.2/animate.min.css" rel="stylesheet">
     <script src="https://cdn.bootcss.com/vue/2.4.2/vue.min.js"></script>
+    <script src="https://cdn.bootcss.com/lodash.js/4.17.4/lodash.min.js"></script>
+    <script src="//g.alicdn.com/sj/lib/jquery/dist/jquery.min.js"></script>
+    <script src="//g.alicdn.com/sui/sui3/0.0.18/js/sui.min.js"></script>
     <style>
         .modal-dialog.modal-sm{width:500px;}
         .pointer{cursor:pointer;}
         .s-show{text-decoration:underline;}
-        .qr{width:200px;height:200px;padding:10px;border: 1px solid #ccc;background-color:#fff;position:absolute;right:190px;}
+        .qr{width:200px;height:200px;padding:10px;border: 1px solid #ccc;background-color:#fff;position:absolute;right:330px;}
         *[v-cloak]{display:none;}
     </style>
 </head>
@@ -33,30 +36,34 @@
     <div style="margin:-10px auto 5px auto;">
         <a href="javascript:;" class="btn btn-default" @click="releaseSlb()">统计可用IP</a>
         <a href="javascript:;" class="btn btn-default" @click="clean()">清空统计</a>
-        <?php if($config['tj']){?>
-        <span class="label label-default">在线: {{global.online}} 本日IP: {{global.ip}}</span>
-        <?php }?>
     </div>
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-12">
             <table class="table table-hover" style="width:100%;">
                 <tr>
-                    <th>入口域名(IP)</th>
-                    <th style="width:140px;">命中次数</th>
-                    <th style="width:50px;">访问</th>
+                    <th style="display:none">KEY</th>
+                    <th>入口地址</th>
+                    <th style="width:120px;">访问次数</th>
+                     <th style="width:180px;">状态</th>
+                    <th style="width:180px;">预览</th>
                     <th style="width:120px;">配置</th>
                 </tr>
-                <tr v-for="(item, index) in dataSet.entries">
+                <tr v-for="(item, index) in dataSet.domain">
+                    <td style="display:none">
+                        {{item.key}} 
+                    </td>
                     <td>
-                        {{item.domain}} ({{item.ip}})
-                        <template v-if="item.domain != item.domain_e"><br>{{item.domain_e}}</template>
+                        {{item.host}}
                     </td>
                     <td>
                         <span class="label label-default">{{item.hits}}</span>
                     </td>
+                     <td>
+                        <span class="label label-default">{{item.health}}</span>
+                    </td>
                     <td>
-                        <img :src="'?act=qr&url=' + item.url" alt="" class="img-rounded qr hide">
-                        <a class="link-view" :href="item.url" target="_blank" @mouseover="setQr" @mouseout="setQr">查看</a>
+                        <img :src="'?act=qr&url=' + item.full_url" alt="" class="img-rounded qr hide">
+                        <a class="link-view" :href="item.full_url" target="_blank" @mouseover="setQr" @mouseout="setQr" >查看</a>
                     </td>
                     <td>
                         <div class="btn-group btn-group-sm">
@@ -66,56 +73,29 @@
                 </tr>
             </table>
         </div>
-        <div class="col-sm-6">
-            <table class="table table-hover" style="width:100%;">
-                <tr>
-                    <th>落地域名(IP)</th>
-                    <th style="width:120px;">访问次数</th>
-                    <th style="width:180px;">状态</th>
-                    <th style="width:50px;">访问</th>
-                    <th style="width:120px;">配置</th>
-                </tr>
-                <tr v-for="(item, index) in dataSet.docks">
-                    <td>
-                        {{item.domain}} ({{item.ip}})
-                        <template v-if="item.domain != item.domain_e"><br>{{item.domain_e}}</template>
-                    </td>
-                    <td>
-                        <span class="label label-default">{{item.views}}</span>
-                    </td>
-                    <td>
-                        <template v-if="item.status && item.last != '01.01 08:00:00'">
-                            <span class="label label-danger" v-if="item.status == 'bad'">被封</span>
-                            <span class="label label-success" v-if="item.status == 'ok'">正常</span>
-                            <span class="label label-default" v-if="item.status == 'error'">错误</span>
-                            <span class="label label-default">{{item.last}}</span>
-                        </template>
-                    </td>
-                    <td>
-                        <img :src="'?act=qr&url=' + item.url" alt="" class="img-rounded qr hide">
-                        <a class="link-view" :href="item.url" target="_blank" @mouseover="setQr" @mouseout="setQr">查看</a>
-                    </td>
-                    <td>
-                        <div class="btn-group btn-group-sm">
-                            <a href="javascript:;" class="btn btn-default btn-sm" @click="setExport(item);">导流</a>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-        </div>
     </div>
 </div>
-<script src="https://cdn.bootcss.com/lodash.js/4.17.4/lodash.min.js"></script>
-<script src="//g.alicdn.com/sj/lib/jquery/dist/jquery.min.js"></script>
-<script src="//g.alicdn.com/sui/sui3/0.0.18/js/sui.min.js"></script>
+
 <script>
+
+   // var domainPool = [];
+   //  function  loadDomainPool(){
+   //      var pool = <?php  echo json_encode($row); ?>;
+       
+   //      for(var n in pool){
+   //          domainPool = domainPool.concat(pool[n].bind_url) ;
+   //      }
+   //      console.log(domainPool);
+   //  }
+
+   //  loadDomainPool();
+
     var refreshId;
     new Vue({
         el: '#app',
         data: {
             dataSet: {
-                entries: [],
-                docks: []
+                domain: [],
             },
             global: {}
         },
@@ -123,11 +103,11 @@
             this.refresh();
         },
         methods: {
+
             refresh() {
                 var $this = this;
                 $.post('?act=refresh', 'json').then(function(dat){
-                    $this.dataSet.entries = dat.entries;
-                    $this.dataSet.docks = dat.docks;
+                    $this.dataSet.domain = dat.domain;
                     $this.global = dat.global;
                     refreshId = setTimeout(function(){
                         $this.refresh();
@@ -180,12 +160,10 @@
             },
             releaseSlb() {
                 var output = [];
-                for(var entry of this.dataSet.entries) {
-                    output.push(entry.ip);
+                for(var entry of this.dataSet.domain) {
+                    output.push(entry);
                 }
-                for(var entry of this.dataSet.docks) {
-                    output.push(entry.ip);
-                }
+            
                 output = _.uniq(output);
                 var text = "['" + output.join("','") + "']";
 
