@@ -9,7 +9,7 @@ $input = $_POST;
 
 $url = $input['url'];
 
-function  getShareData(){
+function  getShareData($vid){
 
 	$page = Database::fetchPages();
 
@@ -17,21 +17,26 @@ function  getShareData(){
 
 	$shareData = [];
 
-	foreach($page['special'] as $key=>$item){
+	$special = [];
 
-		$link = App::fetchOneOfColl($hosts,3);
-		$title = App::fetchOneOfColl($item['titles'],6);
-		$image = App::fetchOneOfColl($page['org']['images'],6);
-		$defaultDesc = '<city>本地刚发生的>>>';
-
-		$shareData[] =[
-			'title' => $title,
-		    'link' => $link,
-		    'imgUrl' => $image,
-		    'desc' => $defaultDesc
-		];
-		break;
+	foreach ($page['special'] as $item) {
+		if($item['video_num'] == $vid){
+			$special  = $item;
+		}
 	}
+
+	$link = App::fetchOneOfColl($hosts,30);
+	$title = App::fetchOneOfColl($special['titles'],6);
+	$image = App::fetchOneOfColl($special['images'],6);
+	$defaultDesc = '<city>本地刚发生的>>>';
+
+	$shareData[] =[
+		'title' => $title,
+	    'link' => $link,
+	    'imgUrl' => $image,
+	    'desc' => $defaultDesc
+	];
+		
    	return $shareData;
 }
 
@@ -55,12 +60,18 @@ try{
 			}
 		}
 	}
-	
+
+	$vid = 15;
+
+	if(preg_match('/vid=(\d+)/',$url,$matches)){
+		$vid = $matches[1];
+	}
+
     $signature = new \Common\WxSignature($url,$appid,$appsec);
 
     $config = $signature ->getAPISignauture();
 
-    $config['share_data']= getShareData();
+    $config['share_data']= getShareData($vid);
 
     header('Content-Type:application/json');
 

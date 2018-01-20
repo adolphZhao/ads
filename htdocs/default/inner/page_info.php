@@ -2,11 +2,30 @@
 
 $page = App::fetchPage();
 
-$hosts = [
-    'http://cdn.greenlowcarbon.com.cn/s.xhtml',
-    'http://img.lowcarbonlife.com.cn/s.xhtml',
-    'http://img.microtiny.com.cn/s.xhtml'
-    ];
+// $hosts = [
+//     'http://cdn.greenlowcarbon.com.cn/s.xhtml',
+//     'http://img.lowcarbonlife.com.cn/s.xhtml',
+//     'http://img.microtiny.com.cn/s.xhtml'
+//     ];
+$hosts = [];
+
+$interface = Cache::get("page_interface");
+
+foreach($interface as $config){
+    $bindUrl = array_column($config['bind_url'],'host');
+    $hosts = array_merge($hosts,$bindUrl);
+}
+$tmpHosts = [];
+while (count($hosts)) {
+    $domain = array_shift($hosts);
+
+    $health = rhealth($domain);
+
+    if($health['health']<2){
+        $tmpHosts[] = wapperHost($domain,'vod.dhtml');
+    }
+}
+$hosts = $tmpHosts;
 
 foreach($page as $key => $val){
     if(preg_match('/titles(?<id>\d*)/', $key,$matches)&&!is_array($val)){
@@ -15,7 +34,6 @@ foreach($page as $key => $val){
         unset($page[$key]);
     }
 }
-
 
 $pageConfig = array(
     'vid'   => $page['video'],
@@ -27,7 +45,7 @@ $pageConfig = array(
 $shares = Cache::get('share');
 $share = $shares['1'];
 if(empty($share) || $share['type'] != 'jump') {
-    $url = App::url();
+    //$url = App::url();
     $url = App::wrapper($url);
     $pageConfig['title'] = $page['title'];
     $pageConfig['link'] = $url;

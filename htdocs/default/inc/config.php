@@ -11,4 +11,4 @@ $config['platform']['password']     = 'Aa123456...';
 $config['platform']['AESKEY']       = '63c5d6361efc548ae2dbce2658dc71be6129d87ff82';
 $config['platform']['TOKEN']        = '7a94fb5edbc2e8aedb3be36daaaf354b';
 
-$config['gateway_res'] = '//jiandingshu.cn/p';
+$config['gateway_res'] = '/public';

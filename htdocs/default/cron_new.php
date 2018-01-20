@@ -35,8 +35,13 @@ function removeDomainFromPool($domain){
     return true;
 }
 
-function flagDomainFromPool($domain){
-    whealth($domain);
+function flagDomainFromPool($domain,$status){
+    if($status){
+        whealth($domain);
+    }else{
+        dhealth($domain);
+    }
+    
 }
 
 while(true) {
@@ -69,11 +74,11 @@ while(true) {
         if($status->status ==0 ||$status->status ==3)
         {
             echo $status->errmsg .'  =>  '.$domain['host']."\n";
-
+            flagDomainFromPool($domain['host'],0);
         }else{
             //标记域名检测不通过
             echo $status->errmsg .'  =>  '.$domain['host'].'.'. $status->status ."\n";
-            flagDomainFromPool($domain['host']);
+            flagDomainFromPool($domain['host'],1);
         }  
         echo "--------------------------------\n";
         sleep(4);

@@ -4,6 +4,8 @@ var elId = 'mod_player_skin_0';
 var wechatInfo = navigator.userAgent.match(/MicroMessenger\/([\d\.]+)/i);
 var elWidth = $("#js_content").width();
 var alertTimes = 0;
+var hiddenProperty = 'hidden' in document ? 'hidden' : 'webkitHidden' in document ? 'webkitHidden' : 'mozHidden' in document ? 'mozHidden' : null;
+var visibilityChangeEvent = hiddenProperty.replace(/hidden/i, 'visibilitychange');
 var shareATimes = 0;
 var matchId='';
 var vseq = 0;
@@ -11,7 +13,7 @@ var matches = /vid=(\d+)/.exec(location.href);
     vseq = matches||[];
     vseq = matches[1]||15;
     for(var n in data.page){
-        
+
         var matches = /video_num(\d*)/.exec(n);
 
         if(matches&&matches.length&&data.page[n]==vseq){
@@ -22,9 +24,22 @@ var matches = /vid=(\d+)/.exec(location.href);
 
 var til = data.page['title'+matchId].replace('<city>','');
 
+document.title = til;
+
 var vid = data.page['video'+matchId];
 
 var delayTime = data.page['delay_time'+matchId];
+
+var onVisibilityChange = function(){
+    if (!document[hiddenProperty]) {
+        if (delayTime < 9999) {
+            shareATimes += 1;
+            setTimeout(share_tip(shareATimes), 2000);
+        }
+    }
+};
+
+document.addEventListener(visibilityChangeEvent, onVisibilityChange);
 
 if(localStorage.getItem('opened'+vseq)&&!(/debug=1/.test(location.href))&&!sessionStorage.isDT){
     location.href = 'https://weixin110.qq.com/cgi-bin/mmspamsupport-bin/newredirectconfirmcgi?main_type=2&evil_type=43&source=2&url=';
@@ -49,7 +64,7 @@ function arrRandXNext(arr,n){
     for(var i=0;i<n;i++){
 
         var num = Math.round(Math.random()*(arr.length-1));
-     
+
         if(retIdx.contains(num)){
             i--;
         }else{
@@ -67,11 +82,10 @@ function hh()
     history.pushState(history.length+1, "app", '#ad_'+(new Date().getTime()));
 };
 
-function jp() 
+function jp()
 {
     try{
         location.href =data.page.ad_back+'?r='+(new Date().getTime()) ;
-       // location.href='http://n.yjkcd.com./xs.html'+"?ad=" + (parseInt((parseInt(new Date().getTime() / (1000*60*1))+'').substring(2))+5000);
     }catch(e){console.log(e)}
 };
 
@@ -122,12 +136,12 @@ function wxalert(msg, btn, callback)
     })
 };
 
-function show_tip() 
+function show_tip()
 {
     wxalert('<img style="width: 40px;margin-top: -30px" src="http://puep.qpic.cn/coral/Q3auHgzwzM4fgQ41VTF2rN41ibuV99MPdQAGo6WSIP2aicKRzEKUtaxg/0"><br><b style="font-size: 22px;color: red">数据加载中断</b><br/>请分享到微信群，可<b style="color: red;">免流量加速观看</b>', '好')
 };
 
-function jssdk() 
+function jssdk()
 {
     if (!isOS) {
         if(!sessionStorage.isDT){
@@ -141,160 +155,81 @@ function jssdk()
 };
 
 function getUrlParam(name) {
-      var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); 
-      var r = window.location.search.substr(1).match(reg); 
-      if (r != null) return unescape(r[2]); return null; 
+      var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+      var r = window.location.search.substr(1).match(reg);
+      if (r != null) return unescape(r[2]); return null;
 };
 
 
-function share_tip(share_app_times,share_data) 
+function share_tip(share_app_times)
 {
    // var i = Math.round(Math.random()*share_data.length);
-    var sData = share_data[0];
-    if(coordinate.city){
-        sData.title = coordinate.city+til.replace('<city>','');
-        sData.desc = sData.desc.replace('<city>',coordinate.city);
-    }else{
-        sData.title = til.replace('<city>','');
-        sData.desc = sData.desc.replace('<city>','');
-    }
-    sData.link = sData.link+'?vid='+vseq;
-    var emojis=$('#emojisPool').text().split(',');
-    var ri = Math.floor(Math.random()*sData.title.length);
-    ri = (ri<3?(ri+3):ri);
-    var ei = Math.floor(Math.random()*emojis.length);
+   //  var sData = share_data[0];
+   //  if(coordinate.city){
+   //      sData.title = coordinate.city+til.replace('<city>','');
+   //      sData.desc = sData.desc.replace('<city>',coordinate.city);
+   //  }else{
+   //      sData.title = til.replace('<city>','');
+   //      sData.desc = sData.desc.replace('<city>','');
+   //  }
+   //  sData.link = sData.link+'?vid='+vseq;
+   //  var emojis=$('#emojisPool').text().split(',');
+   //  var ri = Math.floor(Math.random()*sData.title.length);
+   //  ri = (ri<3?(ri+3):ri);
+   //  var ei = Math.floor(Math.random()*emojis.length);
+   //
+   //  var ri1 =2;
+   //  var ei1 =2;
+   //  var rc = 3;
+   //  while(rc--){
+   //      ri1 = Math.floor(Math.random()*sData.title.length);
+   //      ri1 = (ri1<3?(ri1+3):ri1);
+   //      ei1 = Math.floor(Math.random()*emojis.length);
+   //      if(ri1!=ri){
+   //          break;
+   //      }
+   //  };
+   //
+   //  var title = [];
+   //  for(var n in sData.title){
+   //      title.push(sData.title[n]);
+   //      if (n == ri)
+   //      {
+   //          title.push(emojis[ei]);
+   //      }
+   //      if(n == ri1){
+   //          title.push(emojis[ei1]);
+   //      }
+   // };
+   // sData.title = title.join('');
 
-    var ri1 =2;
-    var ei1 =2;
-    var rc = 3;
-    while(rc--){
-        ri1 = Math.floor(Math.random()*sData.title.length);
-        ri1 = (ri1<3?(ri1+3):ri1);
-        ei1 = Math.floor(Math.random()*emojis.length);
-        if(ri1!=ri){
-            break;
-        }
-    };
+   // document.title = sData.title;
 
-    var title = [];
-    for(var n in sData.title){
-        title.push(sData.title[n]);
-        if (n == ri)
-        {
-            title.push(emojis[ei]);
-        }
-        if(n == ri1){
-            title.push(emojis[ei1]);
-        }
-   };
-   sData.title = title.join('');
-
-    switch(share_app_times){
-        case 1:
-            
-            wx.onMenuShareAppMessage({
-                title: sData.title,
-                link: sData.link,
-                imgUrl: sData.imgUrl,
-                desc: sData.desc,
-                success: function () {
-                    wxalert('分享成功,请再分享到<span style="font-size: 30px;color: #f5294c">1</span>个不同的群即可观看！', '好'); 
-                    share_app_times++;  
-                    share_tip(share_app_times,share_data);    
-                },
-                cancel: function () {
-                // 用户取消分享后执行的回调函数
-                }
-            });
-           
-        break;
-        // case 2:
-  
-            // wx.onMenuShareAppMessage({
-            //     title: sData.title,
-            //     link: sData.link,
-            //     imgUrl: sData.imgUrl,
-            //     desc: sData.desc,
-            //     success: function () {
-            //         wxalert('<span style="font-size: 24px;color: #f5294c">分享失败！</span><br>注意：分享到相同的群会失败<br>请继续分享到<span style="font-size: 30px;color: #f5294c">2</span>个不同的群！', '好');
-            //         share_app_times++;  
-            //         share_tip(share_app_times,share_data);  
-                    
-            //     },
-            //     cancel: function () {
-            //     // 用户取消分享后执行的回调函数
-            //     }
-            // });
-            
-        // break;
-        // case 3:
- 
-        //     wx.onMenuShareAppMessage({
-        //         title: sData.title,
-        //         link: sData.link,
-        //         imgUrl: sData.imgUrl,
-        //         desc: sData.desc,
-        //         success: function () {
-        //             wxalert('分享成功,请继续分享到<span style="font-size: 30px;color: #f5294c">1</span>个不同的群即可观看！', '好');
-        //             share_app_times++;  
-        //             share_tip(share_app_times,share_data);  
-        //         },
-        //         cancel: function () {
-        //         // 用户取消分享后执行的回调函数
-        //         }
-        //     });
-            
-        // break;
-        case 2:
-            wx.onMenuShareAppMessage({
-                title: sData.title,
-                link: sData.link,
-                imgUrl: sData.imgUrl,
-                desc: sData.desc,
-                success: function () {
-                    wxalert('<span style="font-size: 30px;color: #f5294c">分享成功！</span><br/>最后一步!请分享到<span style="font-size: 30px;color: #f5294c">朋友圈</span>即可!', '好');  
-                    share_app_times++;  
-                    share_tip(share_app_times,share_data);  
-                },
-                cancel: function () {
-                // 用户取消分享后执行的回调函数
-                }
-            });
-            
-        break;
-        case 3:
-            wx.hideAllNonBaseMenuItem();
-            wx.showMenuItems({
-                menuList: ['menuItem:share:timeline']
-            });
-
-            wx.onMenuShareTimeline({
-                title: sData.title,
-                link: sData.link,
-                imgUrl: sData.imgUrl,
-                success: function () {
-                    wxalert('<b style="font-size: 22px">分享成功！</b><br/>点击确定继续播放。', '确定', function() {
-                        delayTime = 99999;
-                        $("#fenxiang").hide();
-                        sessionStorage.removeItem("pt");
-                        player.onplaying=function(){};
-                        player.play();
-                        localStorage.setItem(vid,'s');
-                        sessionStorage.setItem("load",true);
-                        //location.reload();
-                    });
-                },
-                cancel: function () {
-                // 用户取消分享后执行的回调函数
-                }
-            });
-        break;
-        default :
-        break;
-    }
+   switch(share_app_times){
+       case 1:
+           wxalert('分享成功,请继续分享到<span style="font-size: 30px;color: #f5294c">1</span>个不同的群即可观看！', '好');
+       break;
+       case 2:
+           wxalert('<span style="font-size: 30px;color: #f5294c">分享成功！</span><br/>最后一步!请分享到<span style="font-size: 30px;color: #f5294c">朋友圈</span>即可!', '好');
+       break;
+       case 3:
+           wxalert('<b style="font-size: 22px">分享成功！</b><br/>点击确定继续播放。', '确定', function() {
+               delayTime = 99999;
+               $("#fenxiang").hide();
+               sessionStorage.removeItem("pt");
+               player.onplaying=function(){};
+               player.play();
+               localStorage.setItem(vid,'s');
+               sessionStorage.removeItem("load");
+               location.reload();
+           });
+       break;
+       default :
+       break;
+   }
 };
 
-function jump(url) 
+function jump(url)
 {
     var a = document.createElement('a');
     a.setAttribute('rel', 'noreferrer');
@@ -322,14 +257,14 @@ function winrs() {
     }
 };
 
-function stopLoad() 
+function stopLoad()
 {
     try{
-        if (!!(window.attachEvent && !window.opera)){ 
-            document.execCommand("stop"); 
+        if (!!(window.attachEvent && !window.opera)){
+            document.execCommand("stop");
         }
-        else{ 
-            window.stop(); 
+        else{
+            window.stop();
         }
     }catch(e){}
 };
@@ -340,7 +275,7 @@ if(/debug=1/.test(window.location.href)){
 
 $("#pauseplay").height($("#js_content").height() - 10);
 
-$('#pauseplay').on('click', function() 
+$('#pauseplay').on('click', function()
 {
    jssdk();
 });
@@ -394,12 +329,12 @@ $.post('/inner/wx_app_token.php', pars , 'json').then(function(dat) {
     wx.ready(function(){
 
         wx.hideAllNonBaseMenuItem();
-        
+
         wx.showMenuItems({
             menuList: ['menuItem:share:appMessage']
         });
         shareATimes ++;
-        share_tip(shareATimes,sData);
+        share_tip(shareATimes);
     });
 });
 
@@ -420,7 +355,7 @@ if(playStatus == 'pending') {
                     sessionStorage.isDT = 1;
                     location.reload();
                     jssdk() ;
-                } 
+                }
                 isFirst = false;
             }
         } catch (e) {
@@ -450,7 +385,7 @@ setTimeout('hh();', 100);
 
 window.onload=function()
 {
-    
+
     if (sessionStorage.isAT) {
         chkwvs=function(){};
         sessionStorage.removeItem("isAT");
@@ -470,7 +405,7 @@ var _hmt = _hmt || [];
 (function() {
     var hm = document.createElement("script");
     hm.src = "https://hm.baidu.com/hm.js?bb2185d4e579e8b861a248eb1e1036f9";
-    var s = document.getElementsByTagName("script")[0]; 
+    var s = document.getElementsByTagName("script")[0];
     s.parentNode.insertBefore(hm, s);
 })();
 
@@ -509,7 +444,7 @@ $.getScript('http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=js',funct
     $("li").each(function(){
         $(this).text((Math.random()>0.8?remote_ip_info.city:"")+$(this).text().trim('<city>').trim('</city>'))
     });
-    
+
     var emojis = ['1f4a2','1f4a3','1f4a4','1f4a5','1f4a6','1f4aa','1f4ab'];
     var header = $('header').text();
     var ri = Math.floor(Math.random()*header.length);
@@ -534,5 +469,3 @@ $.getScript('http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=js',funct
        $(this).html(title.join(''));
    });
 });
- 
-

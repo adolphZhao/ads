@@ -12,11 +12,31 @@
     <script src="//g.alicdn.com/sj/lib/jquery/dist/jquery.min.js"></script>
     <script src="//g.alicdn.com/sui/sui3/0.0.18/js/sui.min.js"></script>
     <style>
-        .modal-dialog.modal-sm{width:500px;}
-        .pointer{cursor:pointer;}
-        .s-show{text-decoration:underline;}
-        .qr{width:200px;height:200px;padding:10px;border: 1px solid #ccc;background-color:#fff;position:absolute;right:330px;}
-        *[v-cloak]{display:none;}
+        .modal-dialog.modal-sm {
+            width: 500px;
+        }
+
+        .pointer {
+            cursor: pointer;
+        }
+
+        .s-show {
+            text-decoration: underline;
+        }
+
+        .qr {
+            width: 200px;
+            height: 200px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            position: absolute;
+            right: 330px;
+        }
+
+        *[v-cloak] {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -43,52 +63,66 @@
                 <tr>
                     <th style="display:none">KEY</th>
                     <th>入口地址</th>
+                    <th>导流设置</th>
                     <th style="width:120px;">访问次数</th>
-                     <th style="width:180px;">状态</th>
+                    <th style="width:180px;">状态</th>
                     <th style="width:180px;">预览</th>
                     <th style="width:120px;">配置</th>
                 </tr>
                 <tr v-for="(item, index) in dataSet.domain">
                     <td style="display:none">
-                        {{item.key}} 
+                        {{item.key}}
                     </td>
                     <td>
                         {{item.host}}
                     </td>
                     <td>
+                        {{item.guide}}
+                    </td>
+                    <td>
                         <span class="label label-default">{{item.hits}}</span>
                     </td>
-                     <td>
-                        <span class="label label-default">{{item.health}}</span>
+                    <td>
+                        <span class="label" v-bind:class="[( item.health==0?'label-success':'label-warning')]">{{item.health}}</span>
                     </td>
                     <td>
                         <img :src="'?act=qr&url=' + item.full_url" alt="" class="img-rounded qr hide">
-                        <a class="link-view" :href="item.full_url" target="_blank" @mouseover="setQr" @mouseout="setQr" >查看</a>
+                        <a class="link-view" :href="item.full_url" target="_blank" @mouseover="setQr" @mouseout="setQr">查看</a>
                     </td>
                     <td>
                         <div class="btn-group btn-group-sm">
+                            <a href="javascript:;" class="btn btn-default btn-sm"
+                               @click="setGuide(item);">导流</a>
+                        </div>
+                        <div class="btn-group btn-group-sm">
                             <a href="javascript:;" class="btn btn-default btn-sm" @click="setOption(item);">删除域名</a>
                         </div>
+
                     </td>
                 </tr>
             </table>
         </div>
     </div>
+    <div id="dialog" style="display: none;">
+        <input id="guide" type="text" style="width:100%" :value="dataSet.currentGuide"/>
+        <ul>输入导流地址: url,percent</ul>
+    </div>
 </div>
+
 
 <script>
 
-   // var domainPool = [];
-   //  function  loadDomainPool(){
-   //      var pool = <?php  echo json_encode($row); ?>;
-       
-   //      for(var n in pool){
-   //          domainPool = domainPool.concat(pool[n].bind_url) ;
-   //      }
-   //      console.log(domainPool);
-   //  }
+    // var domainPool = [];
+    //  function  loadDomainPool(){
+    //      var pool = <?php  echo json_encode($row); ?>;
 
-   //  loadDomainPool();
+    //      for(var n in pool){
+    //          domainPool = domainPool.concat(pool[n].bind_url) ;
+    //      }
+    //      console.log(domainPool);
+    //  }
+
+    //  loadDomainPool();
 
     var refreshId;
     new Vue({
@@ -96,6 +130,7 @@
         data: {
             dataSet: {
                 domain: [],
+                currentGuide: '',
             },
             global: {}
         },
@@ -103,13 +138,15 @@
             this.refresh();
         },
         methods: {
-
+            setState(target){
+                $(target).parent().find('[type="text"]').removeAttr('readonly');
+            },
             refresh() {
                 var $this = this;
-                $.post('?act=refresh', 'json').then(function(dat){
+                $.post('?act=refresh', 'json').then(function (dat) {
                     $this.dataSet.domain = dat.domain;
                     $this.global = dat.global;
-                    refreshId = setTimeout(function(){
+                    refreshId = setTimeout(function () {
                         $this.refresh();
                     }, 3000);
                 });
@@ -118,7 +155,7 @@
                 var $this = this;
                 var pars = {};
                 pars.method = 'clean_count';
-                $.post('?act=config', pars).success(function(){
+                $.post('?act=config', pars).success(function () {
                     clearTimeout(refreshId);
                     $this.refresh();
                     $.toast('成功清空', 'success', 'top center');
@@ -126,21 +163,47 @@
             },
             setOption(entry) {
                 $this = this;
-                if(!entry.option) {
+                if (!entry.option) {
                     entry.option = {};
                 }
+                $._modal({
+                    title: '确认删除域名?',
+                    okbtn: '确认',
+                    cancelbtn: '取消',
+                    width: '80%',
+                    body: _.template($('#dialog').html())(entry.option),
+                    okHide: function () {
+//                        var pars = {};
+//                        pars.key = entry.key;
+//                        pars.method = 'export';
+//                        pars.export = $('.export-url').val();
+//                        $.post("?act=config", pars, 'json').success(function(resp){
+//                            clearTimeout(refreshId);
+//                            $this.refresh();
+//                        });
+                    }
+                });
+            },
+            setGuide(entry){
+                $this = this;
+                $this.dataSet.currentGuide = entry.guide;
                 $._modal({
                     title: '确认导流目的',
                     okbtn: '确认',
                     cancelbtn: '取消',
                     width: '80%',
-                    body: _.template($('#dialog').html())(entry.option),
-                    okHide: function(){
-                        var pars = {};
-                        pars.key = entry.key;
-                        pars.method = 'export';
-                        pars.export = $('.export-url').val();
-                        $.post("?act=config", pars, 'json').success(function(resp){
+                    body: _.template($('#dialog').html())(entry),
+                    okHide: function (e) {
+                        var pars = {'from': '', 'to': {'host': '', 'percent': 0}};
+                        var to = this.$element.find('#guide').val();
+                        pars.from = entry.host;
+                        var toHost = to.split(',');
+                        if (toHost && toHost.length == 2) {
+                            pars.to.host = toHost[0];
+                            pars.to.percent = toHost[1];
+                        }
+
+                        $.post("?act=guide", pars, 'json').success(function (resp) {
                             clearTimeout(refreshId);
                             $this.refresh();
                         });
@@ -151,19 +214,19 @@
                 $.toast('暂不支持');
             },
             setQr(event) {
-                if(event.type == 'mouseover') {
+                if (event.type == 'mouseover') {
                     $(event.srcElement).prev().removeClass('hide');
                 }
-                if(event.type == 'mouseout') {
+                if (event.type == 'mouseout') {
                     $(event.srcElement).prev().addClass('hide');
                 }
             },
             releaseSlb() {
                 var output = [];
-                for(var entry of this.dataSet.domain) {
+                for (var entry of this.dataSet.domain) {
                     output.push(entry);
                 }
-            
+
                 output = _.uniq(output);
                 var text = "['" + output.join("','") + "']";
 

@@ -15,6 +15,7 @@
 		function add_ads(){
 			var c = document.getElementById('container');
 			var cc = c.cloneNode(true);
+          //  $(cc).attr('group','1');
             $(cc).attr('id',$(c).attr('id')+textIndex);
 
 			var cinpitems = cc.getElementsByTagName('input');
@@ -35,16 +36,15 @@
 		
 		function load(){
 			<?php 
-				$arr=[];
-				for($i=0;$i<100;$i++){
-					if(isset( $row['video'.$i] )){
-						$arr[$i]=$i;
-					}
-					else{
-						break;
-					}
-				}
-				echo sprintf('%s','var total='.count($arr).';');
+                $total = 0;
+
+                foreach($row as $key=>$value){
+                    if(preg_match('/video_num\d*/', $key)){
+                        $total ++;
+                    }
+                }
+
+				echo sprintf('%s','var total='.($total-1).';');
 		
 			?>
 			for(i=0;i<total;i++){
@@ -52,10 +52,27 @@
 			}
 			var json = <?php echo json_encode($row);?>;
 			
+            var k = '';
 			for(jn in json){
 				$("[name="+jn+"]").val(json[jn]);
 			}
 		}
+
+        function remove_ads(target){
+            var max = $('[group=1]').length-2;
+            var id = $(target).parent().attr('id');
+            var idx = /container(\d*)/.exec(id);
+            if(idx){
+                $('[name="video'+idx[1]+'"]').val( $('[name="video'+max+'"]').val());
+                $('[name="delay_time'+idx[1]+'"]').val( $('[name="delay_time'+max+'"]').val());
+                $('[name="video_num'+idx[1]+'"]').val( $('[name="video_num'+max+'"]').val());
+                $('[name="titles'+idx[1]+'"]').val( $('[name="titles'+max+'"]').val());
+                $('[name="images'+idx[1]+'"]').val( $('[name="images'+max+'"]').val());
+
+                $('#container'+max).remove();
+            }
+        }
+
 		$(function(){
 			load();
 		});
@@ -78,10 +95,10 @@
     <form action="" method="post" id="postForm">
 		<div class="form-group">
 			<input type="button"  class="btn btn-default" value="增加文章" onclick="add_ads()" />
-			 <button type="submit" class="btn btn-default">提交保存</button>
+			<button type="submit" class="btn btn-default">提交保存</button>
 		</div>
-        <div class="form-group" id="container">
-            <label>文章信息</label>
+        <div class="form-group" id="container" group="1">
+            <label>文章信息</label><a href="javascript:void(0);" class="sui-btn btn-bordered btn-small btn-danger" style="margin-left:10px;border:1px solid #e8351f;padding: 0px 6px;border-radius: 2px;" onclick="remove_ads(this);">删除</a>
             <div class="row">
                 <div class="col-sm-3">
                     <div class="input-group">
@@ -111,22 +128,15 @@
 					</div>
 				</div>
 				<div class="col-sm-6">
-					<div class="form-group">
-						<label>作者链接</label>
-						<textarea name="ad_authors" rows="3" class="form-control"><?php echo $row['ad_authors']?></textarea>
-						<div class="help-block">
-							格式如下, 随机取出其中一条:
-							<blockquote>
-								author,url<br>
-								author,url<br>
-							</blockquote>
-						</div>
-					</div>
+                    <div class="form-group">
+                        <label>分享图片</label>
+                        <textarea name="images" rows="6" class="form-control"><?php echo $row['images']?></textarea>
+                    </div>
 				</div>
 			</div>
-			
+			<hr/>
         </div>
-       <hr>
+
        <div class="row">
                 <div class="col-sm-6">
                     <div class="form-group">
@@ -179,61 +189,44 @@
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label>统计代码</label>
-                        <textarea name="statistics" rows="3" class="form-control"><?php echo $row['statistics']?></textarea>
+                        <textarea name="statistics" rows="6" class="form-control"><?php echo $row['statistics']?></textarea>
                     </div>
                 </div>
-                <div class="col-sm-6">
+
+              
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label>作者链接</label>
+                            <textarea name="ad_authors" rows="3" class="form-control"><?php echo $row['ad_authors']?></textarea>
+                            <div class="help-block">
+                                格式如下, 随机取出其中一条:
+                                <blockquote>
+                                    author,url<br>
+                                    author,url<br>
+                                </blockquote>
+                            </div>
+                        </div>
+                    </div>
+                <div class="form-group">
+                     <div class="col-sm-6">
+                    <label>开放平台参数</label>
                     <div class="form-group">
-                        <label>分享图片</label>
-                        <textarea name="images" rows="3" class="form-control"><?php echo $row['images']?></textarea>
-                    </div>
-                </div>
-            </div>
-             <hr>
-        <div class="row">
-            <div class="col-sm-6">
-                <div class="form-group">
-                    <label>入口域名</label>
-                    <textarea name="entries" rows="3" class="form-control"><?php echo $row['entries']?></textarea>
-                    <div class="help-block">跳转域名</div>
-                </div>
-            </div>
-            <div class="col-sm-6">
-                <div class="form-group">
-                    <label>落地域名</label>
-                    <textarea name="docks" rows="3" class="form-control"><?php echo $row['docks']?></textarea>
-                    <div class="help-block">需要绑定开放平台域名</div>
-                </div>
-            </div>
-        </div>
-        <hr>
-        <div class="row">
-            <div class="col-sm-6">
-                <div class="form-group">
-                    <label>入口大站连接跳转</label>
-                    <textarea name="wrappers" rows="6" class="form-control"><?php echo $row['wrappers']?></textarea>
-                    <div class="help-block">格式(使用{link}替换): http://wapwbclick.mobile.sina.cn/pclogin/pclclick.lua?adurl={link}</div>
-                </div>
-            </div>
-            <div class="col-sm-6">
-                <label>开放平台参数</label>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="input-group">
-                                <span class="input-group-addon">APPID</span>
-                                <input name="platform_appid" type="text" class="form-control" value="<?php echo $row['platform_appid']?>">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="input-group">
+                                    <span class="input-group-addon">APPID</span>
+                                    <input name="platform_appid" type="text" class="form-control" value="<?php echo $row['platform_appid']?>">
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="input-group">
-                                <span class="input-group-addon">SECRET</span>
-                                <input name="platform_secret" type="text" class="form-control" value="<?php echo $row['platform_secret']?>">
+                            <div class="col-sm-6">
+                                <div class="input-group">
+                                    <span class="input-group-addon">SECRET</span>
+                                    <input name="platform_secret" type="text" class="form-control" value="<?php echo $row['platform_secret']?>">
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="form-group">
+
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="input-group">
@@ -249,24 +242,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="input-group">
-                                <span class="input-group-addon">入口路径</span>
-                                <input name="path_entry" type="text" class="form-control" value="<?php echo $row['path_entry']?>">
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="input-group">
-                                <span class="input-group-addon">落地路径</span>
-                                <input name="path_dock" type="text" class="form-control" value="<?php echo $row['path_dock']?>">
-                            </div>
-                        </div>
-                    </div>
-                    <span class="help-block">更改路径后, 还需要配合服务器重写路径</span>
-                </div>
             </div>
+            </div>
+             <hr>
+        <div class="row">
+         
         </div>
        
     </form>

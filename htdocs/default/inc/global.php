@@ -5,7 +5,7 @@ function escape($string, $in_encoding = 'UTF-8',$out_encoding = 'UCS-2') {
     if (function_exists('mb_get_info')) {
         for($x = 0; $x < mb_strlen ( $string, $in_encoding ); $x ++) {
             $str = mb_substr ( $string, $x, 1, $in_encoding );
-            if (strlen ( $str ) > 1) { // 多字节字符 
+            if (strlen ( $str ) > 1) { // 多字节字符
                 $return .= '%u' . strtoupper ( bin2hex ( mb_convert_encoding ( $str, $out_encoding, $in_encoding ) ) );
             } else {
                 $return .= '%' . strtoupper ( bin2hex ( $str ) );
@@ -46,18 +46,27 @@ function rhits($cHost)
     $counter = Cache::get('page_counter');
     $counter = empty($counter)?[]:$counter;
     $counter[$cKey] = empty($counter[$cKey])?[]:$counter[$cKey];
-    
+
     return $counter[$cKey];
 }
 
 function whealth($cHost)
 {
-
     $cKey =  getHostKey(trim($cHost));
     $counter = Cache::get('page_health');
     $counter = empty($counter)?[]:$counter;
     $counter[$cKey] = empty($counter[$cKey])?[]:$counter[$cKey];
     $counter[$cKey] = ['health'=>($counter[$cKey]['health']+1)];
+    Cache::set('page_health',$counter);
+}
+
+function dhealth($cHost)
+{
+    $cKey =  getHostKey(trim($cHost));
+    $counter = Cache::get('page_health');
+    $counter = empty($counter)?[]:$counter;
+    $counter[$cKey] = empty($counter[$cKey])?[]:$counter[$cKey];
+    $counter[$cKey] = ['health'=>0];
     Cache::set('page_health',$counter);
 }
 
@@ -67,7 +76,7 @@ function rhealth($cHost)
     $counter = Cache::get('page_health');
     $counter = empty($counter)?[]:$counter;
     $counter[$cKey] = empty($counter[$cKey])?[]:$counter[$cKey];
-    
+
     return $counter[$cKey];
 }
 
@@ -204,7 +213,7 @@ if(!function_exists('idn_to_utf8')) {
 }
 
 class App {
-    
+
     public static function fetchPage() {
         $page = Cache::get("page_global");
         $page['title'] = self::fetchOneOfColl($page['titles'], 6);
@@ -225,7 +234,7 @@ class App {
         $page['image'] = self::fetchOneOfColl($page['images'], 6);
         return $page;
     }
-    
+
     public static function fetchCfg($key) {
         $cfg = Cache::get("config_{$key}");
         $cfgGlobal = Cache::get('config_global');
@@ -240,7 +249,7 @@ class App {
         }
         return $cfg;
     }
-    
+
     public static function log($content, $file = 'error.log') {
         $path = dirname(dirname(__FILE__)) . '/logs/';
         mkdir($path);
@@ -252,8 +261,11 @@ class App {
         fwrite($fp, "\n");
         fclose($fp);
     }
-    
+
     public static function fetchOneOfColl($coll, $minHash = 6) {
+      if(empty($coll)){
+        return $coll;
+      }
         $now = floor(time() / (60 * $minHash));
         $hashIndex = $now % count($coll);
         return $coll[$hashIndex];
@@ -281,7 +293,7 @@ class App {
         }
         return $url;
     }
-    
+
     public static function wrapper($url) {
         $page = Cache::get('page_global');
         if(parse_url($page['wrappers'][0], PHP_URL_HOST) == parse_url($url, PHP_URL_HOST)) {
@@ -305,7 +317,7 @@ class App {
         }
         Cache::set("hosts_{$key}", $newAllHosts);
     }
-    
+
     private static function generateStr($len = 32) {
         $str = '';
         while(true) {
@@ -315,7 +327,7 @@ class App {
             }
         }
     }
-    
+
     public static function getKey($currentHost = '') {
         if(empty($currentHost)) {
             $currentHost = getenv('HTTP_HOST');
@@ -332,7 +344,7 @@ class App {
         }
         return $currentKey;
     }
-    
+
     public static function checkUA() {
         if(empty($_GET['debug'])) {
             $ua = getenv('HTTP_USER_AGENT');
@@ -342,7 +354,7 @@ class App {
             }
         }
     }
-    
+
     public static function accountSaver($account) {
         $access = @unserialize($account['access']);
         if(!empty($access)) {
@@ -363,7 +375,7 @@ class App {
             Cache::set($jsticketKey, $account['jsticket'], $jsticket['expire'] - time() - 600);
         }
     }
-    
+
     public static function createWx($host) {
         $accounts = Cache::get('accounts_global');
         $key = self::getKey($host);
@@ -376,7 +388,7 @@ class App {
                 $accessKey = "access_{$account['appid']}";
             }
             $account['access'] = Cache::get($accessKey);
-            
+
             if(!empty($account['agent'])) {
                 $jsticketKey = "jsticket_{$account['agent']}_{$account['appid']}";
             } else {
@@ -388,7 +400,7 @@ class App {
         }
         return null;
     }
-    
+
     public static function shortUrl($fullUrls) {
         $url = 'http://api.meituan.com/group/v1/shorturl';
         $headers = array(
@@ -657,7 +669,7 @@ class Cache {
         }
         return $path;
     }
-    
+
     public static function get($key) {
         $filename = self::filePath() . $key;
         if(is_file($filename)) {
@@ -665,7 +677,7 @@ class Cache {
         }
         return null;
     }
-    
+
     public static function set($key, $value) {
         $filename = self::filePath() . $key;
         if(isset($value)) {
@@ -714,7 +726,7 @@ class Counter {
 }
 
 class WeiXin {
-    
+
     private function getAccessToken($appid, $secret) {
         if($this->isAgent) {
             $url = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={$appid}&corpsecret={$secret}";
@@ -735,7 +747,7 @@ class WeiXin {
 
         return $record;
     }
-    
+
     private $isAgent = false;
 
     /**
@@ -752,7 +764,7 @@ class WeiXin {
         $this->saver = $saver;
         $this->isAgent = !empty($account['agent']);
     }
-    
+
     public function jsDataCreate($forceUrl = '') {
         $ticket = @unserialize($this->account['jsticket']);
         if(is_array($ticket) && !empty($ticket['ticket']) && !empty($ticket['expire']) && $ticket['expire'] > time()) {
@@ -831,10 +843,10 @@ class Cross {
         $page = Cache::get('page_global');
         $this->config['APPID']  = $page['platform_appid'];
         $this->config['SECRET'] = $page['platform_secret'];
-        
+
         $this->config['TICKET'] = Cache::get('platform_open_ticket');
         $this->config['ACCESS'] = Cache::get('platform_open_access');
-        
+
         $this->authorizer = Cache::get('platform_open_authorizer');
     }
 
@@ -903,7 +915,7 @@ class Cross {
 	<MsgSignature><![CDATA[{$sign}]]></MsgSignature>
 	<TimeStamp>{$pars['stamp']}</TimeStamp>
 	<Nonce><![CDATA[{$pars['nonce']}]]></Nonce>
-</xml> 
+</xml>
 DOC;
         $xml = trim($xml);
         return $xml;
@@ -926,7 +938,7 @@ DOC;
         }
 
         $input = inputRaw(false);
-        
+
         $dom = new \DOMDocument();
         $xml = '<?xml version="1.0" encoding="utf-8"?>' . $input;
         if(!$dom->loadXML($xml, LIBXML_DTDLOAD | LIBXML_DTDATTR)) {
@@ -1030,7 +1042,7 @@ DOC;
                 $rec['functions'][] = $func['funcscope_category']['id'];
             }
         }
-        
+
         Cache::set('platform_open_authorizer', $rec);
         return $rec;
     }
@@ -1085,10 +1097,10 @@ DOC;
             $rec = array();
             $rec['ticket'] = $result['ticket'];
             $rec['expire'] = time() + $result['expires_in'];
-            
+
             $authorizer['jsticket'] = $rec;
             Cache::set('platform_open_authorizer', $authorizer);
-            
+
             $t = $rec['ticket'];
         }
 
@@ -1104,7 +1116,7 @@ DOC;
         $share['signature'] = sha1($string1);
         return $share;
     }
-    
+
     private function fetchToken() {
         $authorizer = Cache::get('platform_open_authorizer');
         $access = $authorizer['access'];
@@ -1119,12 +1131,12 @@ DOC;
                 $authorizer['refresh'] = $ret['refresh'];
                 $authorizer['access'] = $ret['access'];
                 Cache::set('platform_open_authorizer', $authorizer);
-                
+
                 return $ret['access']['token'];
             }
         }
     }
-    
+
     /*
     public function createAuthorizerAuthUrl($authorizer, $type = 'snsapi_userinfo', $state = '', $callback = '') {
         if(empty($callback)) {

@@ -15,7 +15,8 @@ class Database{
 	        "delay_time",
 	        "video_num",
 	        "titles",
-        	"ad_authors"
+        	"ad_authors",
+        	"images"
 		];
 
 	 	foreach($pages as $key => $item){
@@ -32,7 +33,7 @@ class Database{
     }
 
     public static function str2arr($key,$item){
-    	$changes = ['titles','ad_authors','ad_originals'];
+    	$changes = ['titles','ad_authors','ad_originals','images'];
     	if(in_array($key, $changes )&&!is_array($item)){
     		 return  explode("\n", $item);
     	}
